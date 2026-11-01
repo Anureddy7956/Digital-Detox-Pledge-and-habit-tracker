@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f6fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Digital Detox Pledge & Habit Tracker: face-down focus sessions, stillness tracking and a step counter using your phone's real motion sensors.">
+<title>Unplug · Digital Detox Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%235b5bf0'/%3E%3Cpath d='M11 8v8a5 5 0 0 0 10 0V8M16 21v4' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f4f6fb;--bg2:#e9edf6;--card:rgba(255,255,255,.72);--card2:#fff;--line:rgba(16,24,40,.08);--tx:#101828;--mu:#667085;--ac:#5b5bf0;--ac2:#14b8a6;--ok:#12b76a;--wa:#f79009;--er:#f04438;--sh:0 1px 2px rgba(16,24,40,.04),0 6px 24px rgba(16,24,40,.06);--hm0:#e4e8f1;--b1:rgba(91,91,240,.16);--b2:rgba(20,184,166,.14);color-scheme:light}
+[data-theme=dark]{--bg:#0a0d17;--bg2:#161b2b;--card:rgba(20,25,42,.66);--card2:#1a2033;--line:rgba(255,255,255,.07);--tx:#eceef5;--mu:#8e96aa;--ac:#8b8dff;--ac2:#2dd4bf;--sh:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);--hm0:#1c2236;--b1:rgba(139,141,255,.14);--b2:rgba(45,212,191,.09);color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font:15px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before,.ov::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(42rem 32rem at 0 -10%,var(--b1),transparent 65%),radial-gradient(36rem 30rem at 100% 10%,var(--b2),transparent 65%)}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+[hidden]{display:none!important}
+code{font:12.5px ui-monospace,Menlo,monospace;background:var(--bg2);padding:2px 6px;border-radius:6px}
+.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* nav */
+.nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card2) 84%,transparent);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-top:1px solid var(--line)}
+.nav .brand{display:none}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:14px;color:var(--mu);font-size:11px;font-weight:600;transition:color .2s}
+.nav button.on{color:var(--ac)}
+.nav button .i{width:22px;height:22px}
+main{padding:calc(14px + env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))}
+.wrap{max-width:1060px;margin:0 auto}
+@media(min-width:900px){
+.nav{top:0;right:auto;width:236px;flex-direction:column;gap:4px;padding:22px 14px;border-top:0;border-right:1px solid var(--line)}
+.nav .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:750;padding:0 10px 22px;letter-spacing:-.02em}
+.nav button{flex:none;flex-direction:row;gap:12px;padding:11px 14px;font-size:14.5px}
+.nav button.on{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+main{margin-left:236px;padding:30px 40px 50px}
+.cols{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.card{padding:22px}
+}
+/* header */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.tt{flex:1;min-width:0}
+.tt h1{font-size:clamp(20px,5.4vw,26px);font-weight:750;letter-spacing:-.025em;line-height:1.15}
+.pill{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:99px;font-size:12.5px;font-weight:650;background:var(--card2);border:1px solid var(--line);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mu)}
+.pill.on .dot{background:var(--ok);animation:pulse 2s infinite}
+.pill.sim .dot{background:var(--wa)}.pill.bad{color:var(--er)}.pill.bad .dot{background:var(--er)}
+.pill.cta{background:var(--ac);color:#fff;border-color:transparent}.pill.cta .dot{background:#fff}
+@media(max-width:380px){.pill span{display:none}}
+.avb{width:40px;height:40px;border-radius:50%;flex:none}
+.av{display:block;border-radius:50%}
+/* layout */
+.card{background:var(--card);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);padding:18px;min-width:0}
+.grid{display:grid;gap:14px}.mt{margin-top:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:420px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+h2{font-size:15.5px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;min-height:32px;flex-wrap:wrap}
+.flex{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.c{justify-content:center}.end{justify-content:flex-end}.f1{flex:1;min-width:0}
+.mu{color:var(--mu)}.sm{font-size:13px}.center{text-align:center}.center h2{justify-content:center}
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:14px;background:var(--card2);border:1px solid var(--line);font-weight:650;font-size:14.5px;transition:transform .12s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--ac);color:#fff;border-color:transparent;box-shadow:0 6px 18px -8px var(--ac)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.danger{color:var(--er)}.btn.dangerf{background:var(--er);color:#fff;border-color:transparent}
+.btn.sm{height:36px;padding:0 13px;font-size:13.5px;border-radius:11px}.btn.sm .i{width:17px;height:17px}
+.btn.wide{width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:36px;padding:0 15px;border-radius:99px;background:var(--card2);border:1px solid var(--line);font-size:13.5px;font-weight:650}
+.chip.on{background:var(--tx);color:var(--bg);border-color:transparent}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:var(--bg2);gap:2px}
+.seg button{padding:6px 11px;border-radius:9px;font-size:12.5px;font-weight:650;color:var(--mu)}
+.seg button.on{background:var(--card2);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sw{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;position:relative}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw span{width:44px;height:26px;border-radius:99px;background:var(--bg2);position:relative;transition:background .2s;flex:none;border:1px solid var(--line)}
+.sw span::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.sw input:checked+span{background:var(--ok)}.sw input:checked+span::after{transform:translateX(18px)}
+.sw input:focus-visible+span{outline:2px solid var(--ac);outline-offset:2px}
+input[type=text],input[type=number],input[type=password]{width:100%;height:46px;padding:0 14px;border-radius:13px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font:inherit;font-size:16px}
+.num{width:100px!important;height:38px!important;text-align:right}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.fl{display:block;margin:14px 0}
+.fl>span{display:block;font-size:12px;font-weight:700;color:var(--mu);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em}
+.note{display:flex;gap:10px;padding:12px;border-radius:13px;background:var(--bg2);font-size:13px;color:var(--mu)}
+.note .i{width:18px;height:18px}
+/* stats & lists */
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;min-width:0}
+.stat b{display:block;font-size:21px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat>span{font-size:12px;color:var(--mu);display:block}
+.stat i{font-style:normal}
+.stat .i{width:18px;height:18px;margin-bottom:4px}
+.hero{display:flex;align-items:center;gap:18px}
+.rw{position:relative;width:clamp(112px,36vw,150px);flex:none}.rw svg{display:block;width:100%}
+.rc{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.rc b{font-size:20px;font-weight:800;letter-spacing:-.03em;line-height:1.1}.rc span{font-size:11px;color:var(--mu)}
+.streak{display:flex;align-items:center;gap:6px;color:#f97316}
+.streak b{font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--tx)}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:6px 0;border-top:1px solid var(--line)}.kv b{font-weight:700;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:12.5px;color:var(--mu)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.pl,.ses{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.pl:first-of-type,.ses:first-of-type{border-top:0;padding-top:2px}
+.ico{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.pl-t{font-weight:650;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-s{font-size:12.5px;color:var(--mu);margin:1px 0 6px}
+.bar{height:6px;border-radius:9px;background:var(--bg2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;background:var(--c);transition:width .6s}
+.ck{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;color:transparent;transition:.2s}
+.ck .i{width:16px;height:16px;stroke-width:3}
+.ck.on{background:var(--ok);border-color:var(--ok);color:#fff}.ck.bad{background:var(--er);border-color:var(--er);color:#fff}
+button.ck:active{transform:scale(.9)}
+.empty{padding:18px 0;text-align:center;color:var(--mu);font-size:13.5px}
+.kpi{margin:-6px 0 4px}.kpi b{font-size:22px;font-weight:750;letter-spacing:-.02em}
+.banner{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:color-mix(in srgb,var(--ac) 11%,var(--card2));border:1px solid color-mix(in srgb,var(--ac) 25%,transparent)}
+.banner>.i{color:var(--ac)}
+.tag{font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:99px;background:var(--bg2);color:var(--mu)}
+.tag.live{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+/* charts */
+.chart{display:block;width:100%;height:auto;overflow:visible;color:var(--tx)}
+.chart text{font-size:10px;fill:var(--mu)}
+.hm{display:block;width:100%;height:auto}.hm rect{fill:var(--ac)}.hm rect.z{fill:var(--hm0)}.hm rect.pre{opacity:.35}
+.hm-l i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--ac);margin:0 2px;vertical-align:-1px}
+canvas{display:block;width:100%}
+#rmsc{height:44px}#wave{height:130px}#fp{height:56px;margin:4px 0 8px}
+/* focus HUD */
+.tring{position:relative;width:min(250px,70vw);margin:4px auto 18px}
+.ring{display:block;width:100%;height:auto}
+.tring .rc b{font-size:clamp(32px,10vw,44px);font-weight:750;font-variant-numeric:tabular-nums}
+.tring .rc span{font-size:12.5px;max-width:170px;margin:0 auto}
+.tele{display:flex;align-items:center;gap:14px}
+.ph3{width:92px;height:136px;perspective:420px;display:grid;place-items:center;flex:none}
+.ph{width:56px;height:106px;position:relative;transform-style:preserve-3d;transition:transform .12s linear}
+.ph i{position:absolute;inset:0;border-radius:13px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ph .f{background:linear-gradient(160deg,var(--ac),var(--ac2));border:3px solid #1d2233}
+.ph .f::after{content:"";position:absolute;top:5px;left:50%;width:16px;height:4px;margin-left:-8px;border-radius:4px;background:#1d2233}
+.ph .b{background:linear-gradient(160deg,#3a4160,#232842);transform:rotateY(180deg)}
+.ph .b::after{content:"";position:absolute;top:8px;left:8px;width:14px;height:14px;border-radius:50%;background:#0f1220;box-shadow:0 0 0 2px #4a5275}
+.tg{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+.tv{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:8px 10px;min-width:0}
+.tv span{display:block;font-size:11px;color:var(--mu)}.tv b{font-size:16px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.meter{position:relative;height:8px;border-radius:9px;background:var(--bg2);margin:16px 0 8px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:inherit;background:var(--ok);transition:width .2s,background .3s}
+.meter em{position:absolute;top:-4px;bottom:-4px;left:50%;width:2px;background:var(--er);border-radius:2px}
+.set{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px}
+.set:first-of-type{border-top:0}
+.amb{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.amb .i{width:16px;height:16px;vertical-align:-3px}
+.rng{display:block;margin:10px 0}.rng>span{display:flex;justify-content:space-between;font-size:13px;color:var(--mu)}
+/* badges */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.bd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border-radius:14px;font-size:11.5px;font-weight:600;line-height:1.2}
+.bd:hover{background:var(--bg2)}
+.bdg{width:54px;height:54px;transition:transform .2s}.bdg.off{filter:grayscale(1);opacity:.3}
+.bd:active .bdg{transform:scale(.92)}
+.unl{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:12px}
+.ub{display:flex;flex-direction:column;align-items:center;max-width:150px;gap:4px}.ub .bdg{width:84px;height:84px;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.bbig .bdg{width:110px;height:110px;margin:6px auto 10px;display:block}
+.okc{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;margin:4px auto 12px;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}.okc .i{width:36px;height:36px;stroke-width:3}
+/* pledge doc */
+.doc{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 10%,var(--card)),var(--card))}
+.doc .lab{font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--ac)}
+.doc p{font-size:18px;margin:10px 0 12px;font-weight:500}
+.doc ul{list-style:none;display:grid;gap:10px}
+.doc li{display:flex;gap:10px;align-items:center;font-size:15px}.doc li .i{color:var(--c)}
+.sig{margin-top:22px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--tx) 25%,transparent);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sig span{font:italic 600 22px/1 Georgia,serif}
+.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
+.kind{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);text-align:left;font-size:13.5px;font-weight:600;line-height:1.25;transition:.15s}
+.kind .i{color:var(--c)}
+.kind.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--card2))}
+.caps{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 24px}
+.cap{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.cap b.yes{color:var(--ok)}.cap b.no{color:var(--mu)}
+.steps{margin:10px 0 0 18px;display:grid;gap:8px;font-size:14px}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:50;overflow:auto;background:var(--bg);display:flex;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 16px 32px}
+#lock{z-index:55}
+.obc{width:100%;max-width:520px;margin:auto}
+.obc h1{font-size:26px;letter-spacing:-.03em;margin:12px 0 6px}
+.obk{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.avp{display:flex;flex-direction:column;gap:10px;position:relative;padding-right:72px}
+.avrow{display:flex;gap:8px;flex-wrap:wrap}
+.sc{width:30px;height:30px;border-radius:50%;border:3px solid var(--card2);box-shadow:0 0 0 1px var(--line)}.sc.on{box-shadow:0 0 0 2px var(--tx)}
+.sg{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--bg2);color:var(--mu)}.sg.on{background:var(--tx);color:var(--bg)}
+.avprev{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+.lk{margin:auto;text-align:center;max-width:300px;width:100%;display:flex;flex-direction:column;align-items:center;gap:6px}
+.dots{display:flex;gap:14px;margin:16px 0 22px}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--mu)}.dots i.on{background:var(--tx);border-color:var(--tx)}
+.dots.err{animation:shake .4s}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px;justify-content:center}
+.pad button{width:72px;height:72px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:24px;font-weight:600;display:grid;place-items:center}
+.pad button:active{background:var(--bg2)}
+#dim{position:fixed;inset:0;z-index:80;background:#000;color:#3a3f50;display:grid;place-items:center;text-align:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.dm-l{font-size:13px;letter-spacing:.2em;text-transform:uppercase}
+.dm-t{font-size:64px;font-weight:200;font-variant-numeric:tabular-nums;color:#5a6075;margin:6px 0}
+.dm-u{margin-top:44px;padding:14px 24px;border-radius:99px;border:1px solid #23262f;color:#4b5060;position:relative;overflow:hidden}
+.dm-u::before{content:"";position:absolute;inset:0;background:#1c1f29;transform:scaleX(0);transform-origin:left;transition:transform .15s}
+.dm-u.hold::before{transform:scaleX(1);transition:transform .9s linear}
+.dm-u span{position:relative}
+.sh-bg{position:fixed;inset:0;z-index:60;background:rgba(5,8,18,.45);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .22s}
+.sh-bg.open{opacity:1}
+.sh{position:relative;width:100%;max-width:520px;max-height:90vh;overflow:auto;background:var(--card2);border-radius:26px 26px 0 0;padding:26px 20px calc(22px + env(safe-area-inset-bottom));transform:translateY(30px);transition:transform .25s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+.sh-bg.open .sh{transform:none}
+@media(min-width:640px){.sh-bg{align-items:center}.sh{border-radius:26px;padding:28px}}
+.sh-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--bg2);color:var(--mu)}
+.sh h2{font-size:19px;margin-bottom:6px;padding-right:40px}.sh.center h2,.sh .center h2{padding:0}
+.prow{display:flex;align-items:center;gap:12px;width:100%;padding:10px;border-radius:14px;text-align:left}
+.prow.on,.prow:hover{background:var(--bg2)}.prow small{display:block}
+#toasts{position:fixed;z-index:90;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px;width:min(92vw,420px);pointer-events:none}
+.toast{padding:12px 16px;border-radius:14px;background:var(--tx);color:var(--bg);font-size:14px;font-weight:550;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:tin .3s;transition:opacity .3s,transform .3s}
+.toast.ok{background:var(--ok);color:#fff}.toast.er{background:var(--er);color:#fff}.toast.wa{background:var(--wa);color:#fff}
+.toast.out{opacity:0;transform:translateY(-8px)}
+.view{display:none}.view.on{display:block;animation:vin .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes vin{from{opacity:0;transform:translateY(6px)}}
+@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes pulse{50%{opacity:.35}}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app" hidden>
+<nav class="nav" aria-label="Main"></nav>
+<main><div class="wrap">
+<header class="top">
+<div class="tt"><div class="mu sm" id="h-sub"></div><h1 id="h-title"></h1></div>
+<button class="pill" id="pill" data-act="sensors"></button>
+<button class="avb" id="avb" data-act="profiles" aria-label="Switch profile"></button>
+</header>
+<section class="view" id="v-home"></section>
+<section class="view" id="v-focus"></section>
+<section class="view" id="v-walk"></section>
+<section class="view" id="v-pledges"></section>
+<section class="view" id="v-me"></section>
+</div></main>
+</div>
+<div id="ob" class="ov" hidden></div>
+<div id="lock" class="ov" hidden></div>
+<div id="dim" hidden><div><div class="dm-l" id="dm-l"></div><div class="dm-t" id="dm-t"></div><div class="dm-s" id="dm-s"></div><button class="dm-u" id="dm-u"><span>Hold to unlock</span></button></div></div>
+<div id="sheet" class="sh-bg" hidden><div class="sh" role="dialog" aria-modal="true"></div></div>
+<div id="toasts" aria-live="polite"></div>
+<input type="file" id="file" hidden>
+<script>
+'use strict';
+/* ================= Utilities ================= */
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const pad = n => String(n).padStart(2, '0');
+const uid = () => Math.random().toString(36).slice(2, 10);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const keyDate = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const midnight = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const EPOCH = Date.UTC(2020, 0, 1);
+const dayIdx = k => { const [y, m, d] = k.split('-').map(Number); return Math.round((Date.UTC(y, m - 1, d) - EPOCH) / 864e5); };
+const idxDay = i => { const d = new Date(EPOCH + i * 864e5); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; };
+const fmtClock = ms => { const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600); return (h ? h + ':' : '') + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60); };
+const fmtMin = m => { m = Math.round(m || 0); return m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ' ' + (m % 60) + 'm' : ''}` : m + 'm'; };
+const fmtDate = d => (typeof d === 'string' ? keyDate(d) : d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+const shortDate = d => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+const num = n => Math.round(n || 0).toLocaleString();
+const sum = (a, f) => a.reduce((s, x) => s + (f(x) || 0), 0);
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'me';
+const setT = (id, v) => { const e = document.getElementById(id); if (e && e.textContent !== v) e.textContent = v; };
+const buzz = p => { try { if (P()?.set.hap !== false && navigator.vibrate) navigator.vibrate(p); } catch {} };
+const coarse = () => matchMedia('(pointer:coarse)').matches;
+let _g = 0; const gid = () => 'g' + (++_g);
+const b64e = u => { let s = ''; for (let i = 0; i < u.length; i += 8192) s += String.fromCharCode(...u.subarray(i, i + 8192)); return btoa(s); };
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const crc16 = b => { let c = 0xFFFF; for (const x of b) { c ^= x << 8; for (let i = 0; i < 8; i++) c = (c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1) & 0xFFFF; } return c; };
+const download = (blob, name) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); };
+
+/* ================= Icons (inline SVG paths) ================= */
+const IC = {
+  home: 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z',
+  focus: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8z',
+  walk: 'M8.5 3C10.1 3 11 4.8 11 7s-1 4-2.5 4S6 9.5 6 7s1-4 2.5-4zM6.5 14h4v2a2 2 0 0 1-4 0zM15.5 7c1.6 0 2.5 1.8 2.5 4s-1 4-2.5 4S13 13.5 13 11s1-4 2.5-4zM13.5 18h4v1a2 2 0 0 1-4 0z',
+  shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM8.5 12l2.5 2.5 4.5-5',
+  user: 'M12 12a4 4 0 1 0 0-8a4 4 0 1 0 0 8zM4 21a8 8 0 0 1 16 0',
+  leaf: 'M5 20c0-9 5-15 15-15 0 10-6 15-14 15M5 20l7-7',
+  book: 'M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14',
+  hour: 'M6 3h12M6 21h12M7 3v3l5 6-5 6v3M17 3v3l-5 6 5 6v3',
+  food: 'M7 3v18M4 3v5a3 3 0 0 0 6 0V3M17 21V3c-2 1-3 4-3 8h3',
+  moon: 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
+  flame: 'M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 0 2 1 3 2 3 0-3-1-5.5.5-8z',
+  bolt: 'M13 2L4 14h7l-1 8 9-12h-7z',
+  sun: 'M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+  phone: 'M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2',
+  mount: 'M3 20l6-11 4 6 2-3 6 8z',
+  lock: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',
+  plus: 'M12 5v14M5 12h14',
+  trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+  edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',
+  play: 'M7 4l13 8-13 8z',
+  stop: 'M6 6h12v12H6z',
+  down: 'M12 4v11M7 10l5 5 5-5M5 20h14',
+  up: 'M12 16V5M7 10l5-5 5 5M5 20h14',
+  check: 'M5 12l5 5L20 7',
+  x: 'M6 6l12 12M18 6L6 18',
+  swap: 'M4 8h15l-4-4M20 16H5l4 4',
+  vol: 'M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6z',
+  copy: 'M8 8h12v12H8zM16 8V4H4v12h4',
+  info: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v6M12 7.5v.5',
+  sens: 'M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v.01M3 17h18',
+  wave: 'M2 12h3l2-6 3 12 3-15 3 15 2-6h4'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${IC[n] || IC.star}"/></svg>`;
+const logo = s => { const id = gid(); return `<svg viewBox="0 0 32 32" width="${s}" height="${s}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c7cff"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs><rect width="32" height="32" rx="10" fill="url(#${id})"/><path d="M11 8v8a5 5 0 0 0 10 0V8M16 21v4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`; };
+const AV_H = [245, 175, 20, 330, 140, 200, 45, 280], AV_G = ['leaf', 'moon', 'sun', 'mount', 'bolt', 'flame', 'star', 'focus'];
+const avatar = (av = {}, s = 40) => { const h = AV_H[av.h] ?? 245, id = gid(); return `<svg class="av" viewBox="0 0 40 40" width="${s}" height="${s}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h} 80% 66%)"/><stop offset="1" stop-color="hsl(${h + 35} 70% 46%)"/></linearGradient></defs><circle cx="20" cy="20" r="20" fill="url(#${id})"/><g transform="translate(10 10) scale(.8333)" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[AV_G[av.g]] || IC.leaf}"/></g></svg>`; };
+
+/* ================= Domain model ================= */
+const KINDS = {
+  offline: { name: 'Offline time', icon: 'leaf', c: '#14b8a6', def: 120, max: 1440, u: 'minutes', auto: 1, how: 'Measured automatically from face-down sessions and focus pledges.' },
+  focus: { name: 'Focus / study', icon: 'book', c: '#6366f1', def: 60, max: 960, u: 'minutes', auto: 1, how: 'Measured automatically from time spent in focus pledges.' },
+  steps: { name: 'Daily steps', icon: 'walk', c: '#22c55e', def: 8000, max: 100000, u: 'steps', auto: 1, how: 'Counted by the motion-sensor pedometer while Unplug is open on your phone.' },
+  limit: { name: 'App limit', icon: 'hour', c: '#f43f5e', def: 30, max: 1440, u: 'minutes max', how: "Browsers can't read other apps' usage, so this one is an honest daily self-check." },
+  dining: { name: 'Phone-free meals', icon: 'food', c: '#f59e0b', def: 20, max: 240, u: 'minutes face-down', how: 'Auto-completes when your phone lies face-down this long at mealtimes (7–9:30, 12–2:30, 6–9:30), or tick it yourself.' },
+  sleep: { name: 'Phone-free sleep', icon: 'moon', c: '#8b5cf6', def: 7, max: 14, u: 'hours', how: 'Auto-completes after an overnight face-down session this long (keep Unplug open and charging), or tick it yourself.' },
+  custom: { name: 'Custom habit', icon: 'star', c: '#0ea5e9', def: 1, max: 1, u: '', how: 'A simple daily check-off.' }
+};
+const defLabel = (k, t, app) => ({ offline: `Offline ${fmtMin(t)} a day`, focus: `Focus ${fmtMin(t)} a day`, steps: `Walk ${num(t)} steps`, limit: `${app || 'Instagram'} under ${fmtMin(t)}`, dining: 'Phone-free meals', sleep: `Phone-free sleep (${t}h)`, custom: 'Daily habit' })[k];
+const mkPledge = (kind, o = {}) => { const t = o.target ?? KINDS[kind].def, app = o.app ?? (kind === 'limit' ? 'Instagram' : ''); return { id: uid(), kind, target: t, app, label: o.label || defLabel(kind, t, app) }; };
+const BADGES = [
+  ['flip', 'First Flip', 'Complete a 5-minute face-down session', 'phone', 200],
+  ['deep', 'Deep Diver', 'Finish a focus pledge with zero pickups or breaches', 'focus', 245],
+  ['zen', 'Zen Master', '2 hours of unbroken stillness', 'leaf', 160],
+  ['sleep', 'Screen-Free Sleeper', 'A phone-free night (3h+ face-down overnight)', 'moon', 270],
+  ['t7', '7-Day Detox Titan', 'Reach a 7-day streak', 'flame', 22],
+  ['t30', 'Iron Will', 'Reach a 30-day streak', 'bolt', 350],
+  ['perfect', 'Perfect Week', '7 days in a row at 100%', 'star', 45],
+  ['k10', '10K Walker', 'Walk 10,000 steps in one day', 'walk', 130],
+  ['trail', 'Trailblazer', '100,000 lifetime steps', 'mount', 95],
+  ['off24', 'Off-Grid', '24 hours offline in total', 'sun', 185],
+  ['dine', 'Table Guardian', '5 phone-free meals', 'food', 320],
+  ['early', 'Early Bird', 'Start a focus pledge before 7 am', 'sun', 38]
+].map(([id, name, desc, icon, h]) => ({ id, name, desc, icon, h }));
+const badgeSvg = (b, on) => { const id = gid(); return `<svg viewBox="0 0 64 64" class="bdg${on ? '' : ' off'}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${b.h} 85% 62%)"/><stop offset="1" stop-color="hsl(${b.h + 30} 75% 44%)"/></linearGradient></defs><path d="M32 3l25 14v30L32 61 7 47V17z" fill="url(#${id})"/><path d="M32 9l20 11.5v23L32 55 12 43.5v-23z" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/><g transform="translate(20 20)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[b.icon]}"/></g></svg>`; };
+
+const newDay = () => ({ off: 0, focus: 0, steps: 0, br: 0, pk: 0, sl: 0, dn: 0, wm: 0, ck: {}, ses: [] });
+const NODAY = Object.freeze(newDay());
+const defSet = () => ({ sound: true, hap: true, sens: 1, height: 170, amb: 'pink', auto: true, goal: 8000 });
+const newProfile = (name, av, kinds) => normProfile({ id: uid(), name, av, created: dayKey(), signed: dayKey(), pledges: kinds.map(k => mkPledge(k)) });
+function normProfile(p) {
+  p.id ||= uid(); p.salt ||= uid(); p.name = String(p.name || 'Me').slice(0, 30);
+  p.av = p.av && typeof p.av === 'object' ? p.av : { h: 0, g: 0 };
+  if (!/^\d{4}-\d\d-\d\d$/.test(p.created || '')) p.created = dayKey();
+  p.pledges = (Array.isArray(p.pledges) ? p.pledges : []).filter(x => x && KINDS[x.kind]).slice(0, 12).map(x => ({ ...x, id: x.id || uid(), target: Math.max(1, +x.target || KINDS[x.kind].def), label: String(x.label || defLabel(x.kind, x.target, x.app)).slice(0, 40) }));
+  p.days = p.days && typeof p.days === 'object' ? p.days : {};
+  const cut = dayKey(addDays(new Date(), -45));
+  for (const k in p.days) {
+    if (!/^\d{4}-\d\d-\d\d$/.test(k) || !p.days[k]) { delete p.days[k]; continue; }
+    const d = p.days[k] = Object.assign(newDay(), p.days[k]);
+    if (typeof d.ck !== 'object' || !d.ck) d.ck = {};
+    if (!Array.isArray(d.ses) || k < cut) d.ses = [];
+  }
+  p.badges = p.badges && typeof p.badges === 'object' ? p.badges : {};
+  p.stats = p.stats && typeof p.stats === 'object' ? p.stats : {};
+  p.best = +p.best || 0; p.set = Object.assign(defSet(), p.set);
+  return p;
+}
+
+/* ================= Reactive pub/sub store ================= */
+const Store = (() => {
+  const state = {}, subs = new Map();
+  const emit = key => [...(subs.get(key) || []), ...(subs.get('*') || [])].forEach(fn => { try { fn(state[key], key); } catch (e) { console.error(e); } });
+  return {
+    state,
+    get: k => state[k],
+    set(k, v) { if (state[k] === v && typeof v !== 'object') return; state[k] = v; emit(k); },
+    update(k, fn) { const r = fn(state[k]); emit(k); return r; },
+    on(k, fn) { if (!subs.has(k)) subs.set(k, new Set()); subs.get(k).add(fn); return () => subs.get(k).delete(fn); },
+    emit
+  };
+})();
+let db = null;
+const ui = { view: 'home', trend: 'off', dur: 25, pocket: false, walkMode: false, awake: false, locked: null, ob: null, pin: '', pe: null, av: { h: 0, g: 0 }, today: dayKey() };
+const P = () => db?.profiles[db.active] || null;
+const peek = (k, p = P()) => p?.days[k] || NODAY;
+const todayRec = (p = P()) => p.days[dayKey()] ||= newDay();
+
+/* ================= Binary capsule (compact varint buffer, CRC-16) ================= */
+const Capsule = {
+  KIND: Object.keys(KINDS),
+  encode(p, maxDays = 0) {
+    const out = [], v = n => { n = Math.max(0, Math.floor(n || 0)); while (n > 127) { out.push((n & 127) | 128); n = Math.floor(n / 128); } out.push(n); };
+    const str = s => { const b = new TextEncoder().encode(String(s).slice(0, 40)); v(b.length); out.push(...b); };
+    out.push(0x55, 0x50, 1);
+    str(p.name); v(dayIdx(p.created)); v(BADGES.reduce((m, b, i) => p.badges[b.id] ? m | (1 << i) : m, 0)); v(p.best);
+    v(p.pledges.length); for (const x of p.pledges) { v(this.KIND.indexOf(x.kind)); v(x.target); str(x.label); }
+    let keys = Object.keys(p.days).sort(); if (maxDays) keys = keys.slice(-maxDays);
+    v(keys.length); let prev = 0;
+    for (const k of keys) {
+      const d = p.days[k], i = dayIdx(k); v(i - prev); prev = i;
+      [d.off, d.focus, d.steps, d.br, d.pk, d.sl, d.dn].forEach(v);
+      v(p.pledges.reduce((m, x, j) => d.ck[x.id] ? m | (1 << j) : m, 0));
+    }
+    const c = crc16(out); out.push(c >> 8, c & 255);
+    return new Uint8Array(out);
+  },
+  decode(b) {
+    const n = b.length;
+    if (n < 8 || b[0] !== 0x55 || b[1] !== 0x50) throw Error('Not an Unplug data capsule');
+    if (crc16(b.subarray(0, n - 2)) !== ((b[n - 2] << 8) | b[n - 1])) throw Error('Checksum mismatch — data is corrupted');
+    let i = 3;
+    const v = () => { let r = 0, m = 1, x; do { if (i >= n - 2) throw Error('Capsule truncated'); x = b[i++]; r += (x & 127) * m; m *= 128; } while (x & 128); return r; };
+    const str = () => { const l = v(), s = new TextDecoder().decode(b.subarray(i, i + l)); i += l; return s; };
+    const name = str(), created = idxDay(v()), mask = v(), best = v(), pledges = [], days = {};
+    for (let k = v(); k--;) { const kind = this.KIND[v()] || 'custom', target = v(), label = str(); pledges.push(mkPledge(kind, { target, label })); }
+    let prev = 0;
+    for (let k = v(); k--;) {
+      prev += v();
+      const d = newDay(); ['off', 'focus', 'steps', 'br', 'pk', 'sl', 'dn'].forEach(f => d[f] = v());
+      const cm = v(); pledges.forEach((x, j) => { if (cm & (1 << j)) d.ck[x.id] = 1; });
+      days[idxDay(prev)] = d;
+    }
+    return { name, created, mask, best, pledges, days };
+  }
+};
+const fromCapsule = (r, id = uid()) => normProfile({ id, name: r.name, av: { h: 1, g: 0 }, created: r.created, pledges: r.pledges, days: r.days, best: r.best, badges: Object.fromEntries(BADGES.filter((b, i) => r.mask & (1 << i)).map(b => [b.id, Date.now()])) });
+
+/* ================= Persistence (JSON + base64 capsule per profile) ================= */
+const KEY = 'unplug.v1', LIVE = 'unplug.live';
+function load() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(KEY)); } catch {}
+  if (!d || typeof d !== 'object' || !d.profiles || typeof d.profiles !== 'object') {
+    d = { v: 1, active: null, theme: 'auto', profiles: {} };
+    try { // JSON lost or corrupted: rebuild profiles from the binary capsules
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k?.startsWith(KEY + '.cap.')) { const p = fromCapsule(Capsule.decode(b64d(localStorage.getItem(k))), k.slice(KEY.length + 5)); d.profiles[p.id] = p; }
+      }
+    } catch {}
+  }
+  for (const id in d.profiles) { try { normProfile(d.profiles[id]).id = id; } catch { delete d.profiles[id]; } }
+  if (!d.profiles[d.active]) d.active = Object.keys(d.profiles)[0] || null;
+  return d;
+}
+let saveT = 0, saveErr = 0;
+function save(now) {
+  clearTimeout(saveT);
+  const run = () => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(db));
+      const p = P(); if (p) localStorage.setItem(KEY + '.cap.' + p.id, b64e(Capsule.encode(p)));
+    } catch (e) { if (!saveErr++) toast('Could not save — storage is full or blocked', 'er'); }
+  };
+  now ? run() : (saveT = setTimeout(run, 300));
+}
+
+/* ================= Streak & adherence engine ================= */
+const PASS = 0.75; // a day counts when >= 75% of pledges are kept
+function prog(x, d) {
+  switch (x.kind) {
+    case 'offline': return d.off / x.target;
+    case 'focus': return d.focus / x.target;
+    case 'steps': return d.steps / x.target;
+    case 'sleep': return d.ck[x.id] ? 1 : d.sl / (x.target * 60);
+    case 'dining': return d.ck[x.id] ? 1 : d.dn / x.target;
+    default: return d.ck[x.id] ? 1 : 0;
+  }
+}
+const done = (x, d) => prog(x, d) >= 1;
+function score(p, k) { const pl = p.pledges; if (!pl.length) return 0; const d = peek(k, p); return Math.max(0, pl.filter(x => done(x, d)).length / pl.length - d.br * 0.05); }
+function streak(p) { // walk back from today; one missed day per 7 is forgiven (grace)
+  const created = keyDate(p.created), t0 = midnight(), todayOk = score(p, dayKey(t0)) >= PASS;
+  let d = todayOk ? t0 : addDays(t0, -1), n = 0, grace = null, graces = 0;
+  for (let i = 0; i < 3650 && d >= created; i++, d = addDays(d, -1)) {
+    if (score(p, dayKey(d)) >= PASS) { n++; continue; }
+    if (grace && grace - d < 7 * 864e5) break;
+    grace = d; graces++;
+  }
+  return { n, todayOk, graces: n ? graces : 0 };
+}
+function bestStreak(p) {
+  const end = midnight(); let best = 0, n = 0, grace = null;
+  for (let d = keyDate(p.created), i = 0; d <= end && i < 3650; d = addDays(d, 1), i++) {
+    if (score(p, dayKey(d)) >= PASS) best = Math.max(best, ++n);
+    else if (+d === +end) break;
+    else if (grace && d - grace < 7 * 864e5) { n = 0; grace = null; }
+    else grace = d;
+  }
+  return Math.max(best, p.best || 0);
+}
+function adherence(p) { // recency-weighted average daily score, 30 days
+  const created = keyDate(p.created); let s = 0, w = 0, d = midnight();
+  if (score(p, dayKey(d)) < PASS && +d !== +created) d = addDays(d, -1);
+  for (let i = 0; i < 30 && d >= created; i++, d = addDays(d, -1)) { const wt = 0.93 ** i; s += score(p, dayKey(d)) * wt; w += wt; }
+  return w ? Math.round(s / w * 100) : 0;
+}
+function checkBadges(p = P()) {
+  if (!p) return [];
+  const days = Object.values(p.days); p.best = Math.max(p.best, streak(p).n);
+  const dine = p.pledges.filter(x => x.kind === 'dining');
+  let perfect = false, run = 0;
+  for (let i = 0; i < 60 && p.pledges.length; i++) { if (score(p, dayKey(addDays(new Date(), -i))) >= 1) { if (++run >= 7) { perfect = true; break; } } else if (i) run = 0; }
+  const cond = {
+    flip: p.stats.flip5, deep: p.stats.deep, zen: (p.stats.still || 0) >= 120, sleep: days.some(d => d.sl >= 180),
+    t7: p.best >= 7, t30: p.best >= 30, perfect, k10: days.some(d => d.steps >= 10000), trail: sum(days, d => d.steps) >= 1e5,
+    off24: sum(days, d => d.off) >= 1440, dine: days.filter(d => d.dn >= 15 || dine.some(x => d.ck[x.id])).length >= 5, early: p.stats.early
+  };
+  const fresh = BADGES.filter(b => cond[b.id] && !p.badges[b.id]);
+  fresh.forEach(b => p.badges[b.id] = Date.now());
+  return fresh;
+}
+function dayCheck() {
+  const p = P(), k = dayKey(); if (!p || !p.pledges.length || p.stats.cel === k || score(p, k) < PASS) return;
+  p.stats.cel = k; const s = streak(p).n; p.best = Math.max(p.best, s);
+  Sound.chord(659.25); buzz([30, 50, 30]); toast(`Pledge day complete — ${s}-day streak!`, 'ok'); save();
+}
+
+/* ================= Web Audio engine ================= */
+const Sound = {
+  ctx: null, out: null, amb: null, pb: null,
+  init() {
+    if (this.ctx) return this.ctx;
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    try { this.ctx = new AC(); const comp = this.ctx.createDynamicsCompressor(); this.out = this.ctx.createGain(); this.out.gain.value = 0.7; this.out.connect(comp).connect(this.ctx.destination); } catch { this.ctx = null; }
+    return this.ctx;
+  },
+  unlock() { const c = Sound.init(); if (c && c.state === 'suspended') c.resume().catch(() => {}); },
+  ok() { if (!this.ctx || P()?.set.sound === false) return false; if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {}); return this.ctx.state !== 'closed'; },
+  note(f, t, dur, type = 'sine', vol = 0.15, det = 0) {
+    const c = this.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = f; o.detune.value = det;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(this.out); o.start(t); o.stop(t + dur + 0.05);
+  },
+  blip() { if (!this.ok()) return; const t = this.ctx.currentTime + 0.01; this.note(880, t, 0.15, 'sine', 0.08); this.note(1320, t + 0.06, 0.22, 'sine', 0.07); },
+  chord(root = 523.25) { // celebratory harmonic chord: strummed major triad + octave shimmer
+    if (!this.ok()) return; const t = this.ctx.currentTime + 0.02;
+    [1, 1.25, 1.5, 2].forEach((r, i) => { this.note(root * r, t + i * 0.07, 1.6, 'triangle', 0.12); this.note(root * r * 2, t + i * 0.07, 1.0, 'sine', 0.04, 4); });
+  },
+  fanfare() {
+    if (!this.ok()) return; const t = this.ctx.currentTime + 0.02;
+    [392, 523.25, 659.25, 783.99].forEach((f, i) => this.note(f, t + i * 0.11, 0.25, 'square', 0.045));
+    [523.25, 659.25, 783.99, 1046.5].forEach(f => { this.note(f, t + 0.48, 1.8, 'triangle', 0.1); this.note(f * 1.003, t + 0.48, 1.8, 'sine', 0.06); });
+  },
+  warn() { // detuned sawtooth pulses = pledge breach
+    if (!this.ok()) return; const c = this.ctx, t = c.currentTime + 0.02, lp = c.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 900; lp.connect(this.out);
+    for (let i = 0; i < 3; i++) for (const det of [0, 38]) {
+      const o = c.createOscillator(), g = c.createGain(), s = t + i * 0.22;
+      o.type = 'sawtooth'; o.frequency.value = 196; o.detune.value = det - 20 * i;
+      g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.12, s + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.18);
+      o.connect(g).connect(lp); o.start(s); o.stop(s + 0.2);
+    }
+  },
+  sig(bytes) { // 6-note pentatonic signature derived from the state's CRC = audible snapshot id
+    if (!this.ok()) return; const h = crc16(bytes), sc = [0, 2, 4, 7, 9, 12, 14, 16], t = this.ctx.currentTime + 0.02;
+    for (let i = 0; i < 6; i++) this.note(440 * 2 ** (sc[(h >> [0, 2, 5, 7, 10, 12][i]) & 7] / 12), t + i * 0.12, 0.45, 'sine', 0.12);
+  },
+  pink() { // Paul Kellet pink-noise filter into a looping stereo buffer
+    if (this.pb) return this.pb;
+    const c = this.ctx, n = c.sampleRate * 4, b = c.createBuffer(2, n, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = b.getChannelData(ch); let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852; b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * .5362) * .11; b6 = w * .115926; }
+      for (let i = 0; i < 2000; i++) { const f = i / 2000; d[i] *= f; d[n - 1 - i] *= f; } // soften loop seam
+    }
+    return this.pb = b;
+  },
+  ambient(kind) {
+    this.stopAmb(); if (!kind || kind === 'off' || !this.ok()) return;
+    const c = this.ctx, t = c.currentTime, g = c.createGain(), nodes = [];
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(kind === 'pink' ? 0.35 : 0.3, t + 2); g.connect(this.out);
+    const src = c.createBufferSource(), lp = c.createBiquadFilter(), ng = c.createGain();
+    src.buffer = this.pink(); src.loop = true; lp.type = 'lowpass'; lp.frequency.value = kind === 'pink' ? 3000 : 1200; ng.gain.value = kind === 'pink' ? 1 : 0.35;
+    src.connect(lp).connect(ng).connect(g); src.start(); nodes.push(src);
+    if (kind === 'binaural') { // 200 Hz left / 210 Hz right = 10 Hz alpha beat
+      const m = c.createChannelMerger(2);
+      [200, 210].forEach((f, ch) => { const o = c.createOscillator(), og = c.createGain(); o.frequency.value = f; og.gain.value = 0.22; o.connect(og).connect(m, 0, ch); o.start(); nodes.push(o); });
+      m.connect(g);
+    }
+    this.amb = { g, nodes };
+  },
+  stopAmb() {
+    const a = this.amb; if (!a) return; this.amb = null; const t = this.ctx.currentTime;
+    try { a.g.gain.cancelScheduledValues(t); a.g.gain.setValueAtTime(Math.max(a.g.gain.value, 0.0001), t); a.g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8); } catch {}
+    a.nodes.forEach(n => { try { n.stop(t + 0.9); } catch {} });
+  }
+};
+
+/* ================= Acoustic modem: state <-> dual-tone MFSK audio =================
+   Each byte = 2 simultaneous sine tones (high nibble in band A, low nibble in band B), 30 ms per byte. */
+const goertzel = (x, s, n, f, sr) => { const c = 2 * Math.cos(2 * Math.PI * f / sr); let a = 0, b = 0; for (let i = s; i < s + n; i++) { const t = x[i] + c * a - b; b = a; a = t; } return a * a + b * b - c * a * b; };
+const Modem = {
+  T: 0.03, PRE: 0.2, FA: n => 800 + n * 110, FB: n => 2900 + n * 110, SYNC: [600, 4800],
+  frame: b => new Uint8Array([b.length >> 8, b.length & 255, ...b]),
+  schedule(ctx, dest, bytes, t0) {
+    const f = this.frame(bytes), end = t0 + this.PRE + f.length * this.T, g = ctx.createGain();
+    g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.22, t0 + 0.005); g.gain.setValueAtTime(0.22, end); g.gain.linearRampToValueAtTime(0, end + 0.01); g.connect(dest);
+    [0, 1].forEach(band => {
+      const o = ctx.createOscillator(); o.frequency.setValueAtTime(this.SYNC[band], t0);
+      f.forEach((x, k) => o.frequency.setValueAtTime(band ? this.FB(x & 15) : this.FA(x >> 4), t0 + this.PRE + k * this.T));
+      o.connect(g); o.start(t0); o.stop(end + 0.02);
+    });
+    return end + 0.02 - t0;
+  },
+  async wav(bytes) {
+    const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OAC) throw Error('Offline audio rendering not supported');
+    const sr = 44100, dur = this.PRE + (bytes.length + 2) * this.T + 0.1, ctx = new OAC(1, Math.ceil(dur * sr), sr);
+    this.schedule(ctx, ctx.destination, bytes, 0.02);
+    const data = (await ctx.startRendering()).getChannelData(0), n = data.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, clamp(data[i], -1, 1) * 32767, true);
+    return new Blob([buf], { type: 'audio/wav' });
+  },
+  decode(x, sr) {
+    let s = 0; while (s < x.length && Math.abs(x[s]) < 0.02) s++;
+    if (s >= x.length) throw Error('The audio file is silent');
+    const base = s + this.PRE * sr, T = this.T * sr, w = Math.floor(T * 0.7), off = T * 0.15;
+    const sym = k => {
+      const a = (base + k * T + off) | 0; if (a + w > x.length) throw Error('Tone ended early');
+      let ba = 0, bb = 0, ma = -1, mb = -1;
+      for (let n = 0; n < 16; n++) { const ga = goertzel(x, a, w, this.FA(n), sr), gb = goertzel(x, a, w, this.FB(n), sr); if (ga > ma) { ma = ga; ba = n; } if (gb > mb) { mb = gb; bb = n; } }
+      return (ba << 4) | bb;
+    };
+    const len = (sym(0) << 8) | sym(1); if (!len || len > 8000) throw Error('No Unplug data found in this audio');
+    const out = new Uint8Array(len); for (let k = 0; k < len; k++) out[k] = sym(k + 2); return out;
+  }
+};
+const decodeAudio = (c, buf) => new Promise((res, rej) => { const r = c.decodeAudioData(buf, res, rej); if (r?.then) r.then(res, rej); });
+const audioBytes = p => Capsule.encode(p, 14);
+
+/* ================= Screen Wake Lock ================= */
+const Wake = {
+  why: new Set(), lock: null,
+  set(r, on) { on ? this.why.add(r) : this.why.delete(r); this.sync(); },
+  async sync() {
+    const want = this.why.size > 0 && document.visibilityState === 'visible';
+    try {
+      if (want && !this.lock && 'wakeLock' in navigator) {
+        this.lock = 'pending'; const l = await navigator.wakeLock.request('screen');
+        if (!this.why.size) { this.lock = null; return l.release(); }
+        this.lock = l; l.addEventListener('release', () => { if (this.lock === l) this.lock = null; });
+      } else if (!want && this.lock && this.lock !== 'pending') { const l = this.lock; this.lock = null; await l.release(); }
+    } catch { if (this.lock === 'pending') this.lock = null; }
+  }
+};
+
+/* ================= Real-time sensors ================= */
+const S = { st: 'idle', real: false, sim: false, ori: false, beta: 0, gamma: 0, rms: 0, ms: 0, mag: 9.81, lux: null, down: false, fdT: 0, fuT: 0, lt: 0, px: null, py: 0, pz: 0, hist: new Float32Array(60), hi: 0, ht: 0 };
+const needPerm = () => typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+const pickThr = () => [0.6, 0.4, 0.26][P()?.set.sens ?? 1];
+const setSt = st => { if (S.st !== st) { S.st = st; Store.emit('sensor'); } };
+const Sens = {
+  on: false,
+  enable(user) { // must run synchronously inside a tap on iOS
+    if (['on', 'asking', 'waiting'].includes(S.st) && this.on) return;
+    if (!window.isSecureContext) { setSt('insecure'); if (!coarse()) Sim.start(); return; }
+    if (!('DeviceMotionEvent' in window)) { setSt('nodata'); if (!coarse()) Sim.start(); return; }
+    if (needPerm()) {
+      if (!user) { // try silently (works where access was already granted); otherwise wait for a tap
+        setSt('idle'); DeviceMotionEvent.requestPermission().then(r => { if (r === 'granted' && S.st === 'idle') this.listen(); }, () => {});
+        return;
+      }
+      setSt('asking');
+      const reqs = [DeviceMotionEvent.requestPermission()];
+      if (typeof window.DeviceOrientationEvent?.requestPermission === 'function') reqs.push(DeviceOrientationEvent.requestPermission());
+      Promise.allSettled(reqs).then(r => r.some(x => x.value === 'granted') ? this.listen() : setSt('denied'));
+    } else this.listen();
+  },
+  listen() {
+    if (!this.on) {
+      this.on = true;
+      addEventListener('devicemotion', onMotion, { passive: true });
+      addEventListener('deviceorientation', onOriEv, { passive: true });
+      startLight();
+    }
+    if (S.real) return setSt('on');
+    setSt('waiting');
+    setTimeout(() => { if (!S.real) { setSt('nodata'); if (!coarse()) Sim.start(); } }, 2500);
+  }
+};
+function onMotion(e) {
+  const a = e.accelerationIncludingGravity;
+  if (!a || a.x == null || a.y == null || a.z == null) return;
+  if (!S.real) { S.real = true; Sim.stop(); setSt('on'); }
+  accel(a.x, a.y, a.z, performance.now());
+}
+function onOriEv(e) { if (e.beta == null || S.sim) return; S.ori = true; orient(e.beta, e.gamma || 0); }
+function startLight() {
+  try {
+    if ('AmbientLightSensor' in window) { const l = new AmbientLightSensor({ frequency: 1 }); l.onreading = () => { S.lux = l.illuminance; }; l.onerror = () => {}; l.start(); }
+    else if ('ondevicelight' in window) addEventListener('devicelight', e => { S.lux = e.value; });
+  } catch {}
+}
+function accel(x, y, z, t) { // RMS of sample-to-sample delta acceleration (normalised to 60 Hz)
+  const dt = S.lt ? clamp(t - S.lt, 4, 100) : 16.7; S.lt = t;
+  if (S.px != null) { const d = Math.hypot(x - S.px, y - S.py, z - S.pz) * 16.7 / dt; S.ms += (d * d - S.ms) * dt / (300 + dt); S.rms = Math.sqrt(S.ms); }
+  S.px = x; S.py = y; S.pz = z; S.mag = Math.hypot(x, y, z);
+  faceEval();
+  Ped.feed(S.mag, t);
+  Ses.motion(t);
+  if (t - S.ht > 100) { S.ht = t; S.hist[S.hi++ % 60] = S.rms; }
+}
+function orient(b, g) { S.beta = b; S.gamma = g; faceEval(); }
+// Browsers only fire deviceorientation when the angle changes, so a phone lying still stops
+// sending events. Re-evaluate from the last known angles on every motion sample and tick.
+function faceEval() {
+  if (S.ori || S.sim) { const ab = Math.abs(S.beta), ag = Math.abs(S.gamma); face(ab > 160 && ag < 30, ab < 140 || ag > 45); }
+  else if (S.real && S.px != null) face(S.pz < -8.3, S.pz > -6); // no orientation sensor: gravity z fallback
+}
+function face(down, up) { // hysteresis: 1.5 s face-down to start, 0.8 s face-up to stop
+  const t = performance.now();
+  if (!S.down) { if (down) { S.fdT ||= t; if (t - S.fdT > 1500) setDown(true); } else S.fdT = 0; }
+  else if (up) { S.fuT ||= t; if (t - S.fuT > 800) setDown(false); } else S.fuT = 0;
+}
+function setDown(v) {
+  S.down = v; S.fdT = S.fuT = 0;
+  const p = P(); if (!p || ui.locked || ui.ob) return;
+  if (v && !Ses.cur && p.set.auto) Ses.start('flip');
+  else if (!v && Ses.cur?.kind === 'flip') Ses.end('flip');
+  else buzz(v ? 20 : [10, 40, 10]);
+  Store.emit('session');
+}
+
+/* ================= Pedometer: gravity-removed magnitude, peak + rhythm detection ================= */
+const Ped = {
+  g: 9.81, f: 0, prev: 0, up: false, arm: true, last: 0, lt: 0, pend: [], walking: false, times: [], lastC: 0, dirty: 0, saveT: 0,
+  wv: new Float32Array(180), wi: 0, wt: 0, marks: [],
+  thr: () => [1.45, 1.05, 0.72][P()?.set.sens ?? 1],
+  feed(m, t) {
+    const dt = this.lt ? clamp((t - this.lt) / 1000, 0.004, 0.1) : 0.016; this.lt = t;
+    if (Math.abs(m - this.g) > 30) return;
+    this.g += (m - this.g) * dt / (1.2 + dt);            // slow low-pass = gravity baseline
+    this.f += (m - this.g - this.f) * dt / (0.06 + dt);  // ~2.6 Hz smoothing of the residual
+    const v = this.f, thr = this.thr();
+    if (v < thr * 0.25) this.arm = true;                 // must dip back down between steps
+    if (v < this.prev && this.up && this.arm && this.prev > thr) { this.arm = false; this.step(t); }
+    if (v !== this.prev) this.up = v > this.prev;
+    this.prev = v;
+    if (this.walking && t - this.last > 2200) this.walking = false;
+    if (t - this.wt > 33) { this.wt = t; this.wv[this.wi++ % 180] = v; }
+  },
+  step(t) {
+    const dt = t - this.last; if (dt < 250) return;
+    this.last = t; this.marks.push(this.wi); if (this.marks.length > 40) this.marks.shift();
+    if (this.walking && dt < 2200) return this.commit(1, t);
+    this.walking = false;
+    if (dt > 2200) this.pend = [];
+    this.pend.push(t);
+    if (this.pend.length < 5) return;
+    const iv = this.pend.slice(1).map((x, i) => x - this.pend[i]), mean = iv.reduce((a, b) => a + b) / iv.length;
+    if (mean < 1600 && iv.every(x => Math.abs(x - mean) < mean * 0.45)) { this.walking = true; this.commit(this.pend.length, t); this.pend = []; }
+    else this.pend.shift();
+  },
+  commit(n, t) {
+    const p = P(); if (!p) return;
+    const d = todayRec(p); d.steps += n;
+    (d.sh ||= Array(24).fill(0))[new Date().getHours()] += n;
+    if (this.lastC && t - this.lastC < 2500) d.wm += (t - this.lastC) / 6e4;
+    this.lastC = t; this.times.push(t); if (this.times.length > 12) this.times.shift();
+    this.dirty += n;
+  },
+  cadence() { const a = this.times; return this.walking && a.length > 2 ? Math.round((a.length - 1) / ((a[a.length - 1] - a[0]) / 6e4)) : 0; },
+  flush(force) {
+    if (!this.dirty) return; const now = Date.now(); if (!force && now - this.saveT < 4000) return;
+    this.saveT = now; this.dirty = 0; const fresh = checkBadges(); save(); dayCheck(); celebrate(fresh);
+    if (ui.view === 'home') render(); else if (ui.view === 'walk') walkCharts();
+  }
+};
+
+/* ================= Desktop sensor simulator (feeds the same pipeline) ================= */
+const Sim = {
+  b: 8, g: 0, walk: false, shake: 0, t: 0, id: 0,
+  start() { if (this.id || S.real) return; S.sim = true; this.id = setInterval(() => this.step(), 16); if (S.st === 'nodata') setSt('sim'); else Store.emit('sensor'); },
+  stop() { clearInterval(this.id); this.id = 0; S.sim = false; this.walk = false; },
+  step() {
+    const now = performance.now(), b = this.b * Math.PI / 180, g = this.g * Math.PI / 180, G = 9.81, n = () => (Math.random() - 0.5) * 0.03;
+    let x = -G * Math.cos(b) * Math.sin(g) + n(), y = G * Math.sin(b) + n(), z = G * Math.cos(b) * Math.cos(g) + n();
+    this.t += 0.016;
+    if (this.walk) { const ph = 2 * Math.PI * 1.85 * this.t, a = 2.6 * Math.sin(ph) + 0.5 * Math.sin(2 * ph + 1) + (Math.random() - 0.5) * 0.3, m = Math.hypot(x, y, z); x += x / m * a; y += y / m * a; z += z / m * a; }
+    if (now < this.shake) { const r = () => (Math.random() - 0.5) * 7; x += r(); y += r(); z += r(); }
+    orient(this.b, this.g); accel(x, y, z, now);
+  }
+};
+
+/* ================= Detox sessions (face-down "flip" & timed focus "pledge") ================= */
+const isMeal = t => { const d = new Date(t), h = d.getHours() + d.getMinutes() / 60; return (h >= 7 && h < 9.5) || (h >= 12 && h < 14.5) || (h >= 18 && h < 21.5); };
+const nightOverlap = (a, b) => { for (let t = a; t <= b; t += 9e5) { const h = new Date(t).getHours(); if (h >= 22 || h < 7) return true; } return false; };
+const Ses = {
+  cur: null,
+  start(kind, min = 0) {
+    const p = P(); if (this.cur || !p) return;
+    const now = Date.now(), h = new Date().getHours();
+    this.cur = { kind, t0: now, tgt: min * 6e4, hid: 0, hidAt: 0, pk: 0, br: 0, st0: now, st: 0, lx: 0, ln: 0, pkT: 0, lastPk: 0, hb: now, pid: p.id };
+    if (kind === 'pledge' && h >= 4 && h < 7) p.stats.early = 1;
+    Wake.set('ses', true); Sound.ambient(p.set.amb); buzz(30); this.beat();
+    toast(kind === 'flip' ? 'Deep Detox started — enjoy the quiet' : `Focus pledge started · ${min} min`, 'ok');
+    Store.emit('session');
+  },
+  el(at = Date.now()) { const c = this.cur; return c ? Math.max(0, at - c.t0 - c.hid - (c.hidAt ? at - c.hidAt : 0)) : 0; },
+  motion(t) {
+    const c = this.cur; if (!c) return;
+    const thr = pickThr(), now = Date.now();
+    if (S.rms > thr * 0.5) { c.st = Math.max(c.st, now - c.st0); c.st0 = now; } // stillness broken
+    if (c.kind !== 'pledge') return;
+    if (S.rms <= thr) { c.pkT = 0; return; }
+    if (!c.pkT) c.pkT = t;
+    else if (t - c.pkT > 250 && now - c.lastPk > 6000) { c.lastPk = now; c.pk++; c.pkT = 0; Sound.warn(); buzz([120, 60, 120]); toast('Phone picked up during your focus pledge', 'wa'); }
+  },
+  tick() {
+    const c = this.cur; if (!c) return; const now = Date.now();
+    if (S.lux != null) { c.lx += S.lux; c.ln++; }
+    if (c.kind === 'pledge' && this.el(now) >= c.tgt) return this.end('done');
+    if (now - c.hb > 5000) this.beat();
+  },
+  beat() { const c = this.cur; if (!c) return; c.hb = Date.now(); try { localStorage.setItem(LIVE, JSON.stringify(c)); } catch {} },
+  end(why, at = Date.now()) {
+    const c = this.cur; if (!c) return; this.cur = null;
+    try { localStorage.removeItem(LIVE); } catch {}
+    Wake.set('ses', false); Sound.stopAmb();
+    const p = db.profiles[c.pid]; if (!p) return Store.emit('session');
+    if (c.hidAt) { c.hid += Math.max(0, at - c.hidAt); c.hidAt = 0; }
+    const ms = Math.max(0, at - c.t0 - c.hid), min = Math.floor(ms / 6e4), still = Math.max(c.st, at - c.st0), pledge = c.kind === 'pledge', ok = !pledge || ms >= c.tgt;
+    if (pledge && !ok) c.br++;
+    let fresh = [];
+    if (min >= 1 || c.br) {
+      const d = p.days[dayKey(new Date(at))] ||= newDay();
+      d.off += min; if (pledge) d.focus += min; d.br += c.br; d.pk += c.pk;
+      if (min >= 10 && isMeal(c.t0)) d.dn += min;
+      if (!pledge && min >= 180 && (nightOverlap(c.t0, at) || (c.ln && c.lx / c.ln < 8))) d.sl = Math.max(d.sl, min);
+      d.ses.push({ t: c.t0, m: min, k: c.kind[0], pk: c.pk, br: c.br, ok: ok ? 1 : 0 });
+      p.stats.still = Math.max(p.stats.still || 0, Math.floor(still / 6e4));
+      if (!pledge && min >= 5) p.stats.flip5 = 1;
+      if (pledge && ok && !c.br && !c.pk) p.stats.deep = 1;
+      fresh = checkBadges(p);
+    }
+    Store.emit('db'); Store.emit('session');
+    if (why === 'recover') return toast(`Recovered an unfinished session · ${fmtMin(min)} logged`);
+    if (pledge && ok) { Sound.chord(); buzz([40, 60, 40, 60, 120]); summary(c, min, still, fresh); }
+    else if (pledge) { Sound.warn(); buzz([200, 80, 200]); toast(`Pledge ended early — breach logged (${fmtMin(min)} still counted)`, 'er'); celebrate(fresh); }
+    else { if (min >= 1) { Sound.chord(392); toast(`Deep Detox · ${fmtMin(min)} offline logged`, 'ok'); } else toast('Session under a minute — not logged'); celebrate(fresh); }
+  },
+  hide(now) { const c = this.cur; if (!c) return; if (c.kind === 'flip') this.end('hidden', now); else if (!c.hidAt) { c.hidAt = now; this.beat(); } },
+  show(now) { // Page Visibility: leaving the app during a pledge = breach
+    const c = this.cur; if (!c?.hidAt) return;
+    const away = now - c.hidAt; c.hid += away; c.hidAt = 0;
+    if (away > 3000) { c.br++; Sound.warn(); buzz([200, 100, 200]); toast(`Pledge breach — you left the app for ${fmtClock(away)}`, 'er'); }
+    Store.emit('session');
+  },
+  recover() {
+    let c = null; try { c = JSON.parse(localStorage.getItem(LIVE) || 'null'); } catch {}
+    if (!c || !db.profiles[c.pid]) { try { localStorage.removeItem(LIVE); } catch {} return; }
+    const now = Date.now(), gap = now - (c.hidAt || c.hb);
+    this.cur = c;
+    if (c.kind === 'pledge' && gap < 6e5) {
+      c.hid += c.hidAt ? now - c.hidAt : gap; c.hidAt = 0; if (gap > 3000) c.br++;
+      Wake.set('ses', true); this.beat(); toast('Focus pledge resumed after reload' + (gap > 3000 ? ' — breach logged' : ''), 'wa');
+    } else this.end('recover', c.hidAt || c.hb);
+  }
+};
+
+/* ================= Micro-charts (pure SVG / canvas) ================= */
+function lineChart(vals, color, fmt) {
+  const W = 320, H = 130, B = 20, T = 16, n = vals.length, max = Math.max(1, ...vals) * 1.1, id = gid();
+  const pts = vals.map((v, i) => [+(6 + i * (W - 12) / (n - 1)).toFixed(1), +(H - B - (v / max) * (H - B - T)).toFixed(1)]);
+  const d = pts.reduce((s, [x, y], i) => { if (!i) return `M${x},${y}`; const [x0, y0] = pts[i - 1], m = ((x0 + x) / 2).toFixed(1); return s + `C${m},${y0} ${m},${y} ${x},${y}`; }, '');
+  const [lx, ly] = pts[n - 1], lab = [0, n >> 1, n - 1].map((i, j) => `<text x="${pts[i][0]}" y="${H - 4}" text-anchor="${['start', 'middle', 'end'][j]}">${i === n - 1 ? 'Today' : shortDate(addDays(new Date(), i - n + 1))}</text>`).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="14-day trend"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><line x1="6" x2="${W - 6}" y1="${H - B}" y2="${H - B}" stroke="currentColor" stroke-opacity=".1"/><path d="${d}L${lx},${H - B}L6,${H - B}Z" fill="url(#${id})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/><circle cx="${lx}" cy="${ly}" r="4.5" fill="${color}"/>${lab}<text x="6" y="10">peak ${fmt(Math.max(...vals))}</text></svg>`;
+}
+function bars(vals, labels, color, goal = 0) {
+  const W = 320, H = 120, B = 18, n = vals.length, max = Math.max(goal * 1.1, ...vals, 1), st = W / n, bw = st * 0.62, sc = v => (v / max) * (H - B - 8);
+  let r = '';
+  vals.forEach((v, i) => {
+    const h = v ? Math.max(3, sc(v)) : 0;
+    r += `<rect x="${(i * st + (st - bw) / 2).toFixed(1)}" y="${(H - B - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4, bw / 2).toFixed(1)}" fill="${color}"><title>${labels[i] || i}: ${num(v)}</title></rect>`;
+    if (labels[i]) r += `<text x="${(i * st + st / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle">${labels[i]}</text>`;
+  });
+  if (goal) { const y = (H - B - sc(goal)).toFixed(1); r += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="${color}" stroke-dasharray="4 4" stroke-opacity=".6"/>`; }
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"><line x1="0" x2="${W}" y1="${H - B}" y2="${H - B}" stroke="currentColor" stroke-opacity=".1"/>${r}</svg>`;
+}
+function rings(items) {
+  const sw = 11, gap = 3;
+  return '<svg viewBox="0 0 160 160" aria-hidden="true">' + items.map((it, i) => {
+    const r = 80 - sw / 2 - i * (sw + gap), C = 2 * Math.PI * r, v = clamp(it.v || 0, 0, 1);
+    return `<circle cx="80" cy="80" r="${r}" fill="none" stroke="${it.c}" stroke-opacity=".15" stroke-width="${sw}"/>${v > 0.005 ? `<circle cx="80" cy="80" r="${r}" fill="none" stroke="${it.c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${(C * v).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 80 80)"/>` : ''}`;
+  }).join('') + '</svg>';
+}
+const ringSvg = (id, color) => { const C = (2 * Math.PI * 88).toFixed(1); return `<svg viewBox="0 0 200 200" class="ring" aria-hidden="true"><circle cx="100" cy="100" r="88" fill="none" style="stroke:${color}" stroke-opacity=".14" stroke-width="12"/><circle id="${id}" cx="100" cy="100" r="88" fill="none" style="stroke:${color};transition:stroke-dashoffset .4s;opacity:0" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 100 100)"/></svg>`; };
+const setRing = (id, f) => { const r = document.getElementById(id); if (!r) return; f = clamp(f, 0, 1); r.style.strokeDashoffset = (2 * Math.PI * 88 * (1 - f)).toFixed(1); r.style.opacity = f > 0.002 ? 1 : 0; };
+function heatmap(p, W) {
+  const s = 14, g = 3, t = midnight(), start = addDays(t, -(W - 1) * 7 - t.getDay()), created = keyDate(p.created); let r = '';
+  for (let w = 0; w < W; w++) for (let i = 0; i < 7; i++) {
+    const d = addDays(start, w * 7 + i); if (d > t) continue;
+    const k = dayKey(d), pre = d < created, sc = pre ? 0 : score(p, k);
+    r += `<rect x="${w * (s + g)}" y="${i * (s + g)}" width="${s}" height="${s}" rx="3.5" class="${sc ? '' : 'z'}${pre ? ' pre' : ''}"${sc ? ` fill-opacity="${(0.25 + sc * 0.75).toFixed(2)}"` : ''}><title>${fmtDate(d)}: ${Math.round(sc * 100)}%</title></rect>`;
+  }
+  return `<svg class="hm" viewBox="0 0 ${W * (s + g) - g} ${7 * (s + g) - g}" role="img" aria-label="Adherence heatmap">${r}</svg>`;
+}
+const col = n => (ui.cs ||= getComputedStyle(document.documentElement)).getPropertyValue(n).trim() || '#888';
+const ctx2d = cv => { const dpr = Math.min(2, devicePixelRatio || 1), w = cv.clientWidth || 300, h = cv.clientHeight || 60; if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); } const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h); return { x, w, h }; };
+function drawRms() {
+  const cv = $('#rmsc'); if (!cv) return; const { x, w, h } = ctx2d(cv), max = pickThr() * 2, ty = h / 2;
+  x.strokeStyle = col('--er'); x.globalAlpha = .5; x.setLineDash([3, 3]); x.beginPath(); x.moveTo(0, ty); x.lineTo(w, ty); x.stroke(); x.setLineDash([]); x.globalAlpha = 1;
+  x.strokeStyle = col('--ac'); x.lineWidth = 2; x.beginPath();
+  for (let i = 0; i < 60; i++) { const v = S.hist[(S.hi + i) % 60], px = i / 59 * w, py = h - 1 - Math.min(1, v / max) * (h - 2); i ? x.lineTo(px, py) : x.moveTo(px, py); }
+  x.stroke();
+}
+function drawWave() {
+  const cv = $('#wave'); if (!cv) return; const { x, w, h } = ctx2d(cv), N = 180, mid = h * 0.62, sc = h / 9, thr = Ped.thr();
+  x.strokeStyle = col('--mu'); x.globalAlpha = .6; x.setLineDash([4, 4]); x.beginPath(); x.moveTo(0, mid - thr * sc); x.lineTo(w, mid - thr * sc); x.stroke(); x.setLineDash([]); x.globalAlpha = 1;
+  x.strokeStyle = '#22c55e'; x.lineWidth = 2; x.beginPath();
+  for (let i = 0; i < N; i++) { const v = Ped.wv[(Ped.wi + i) % N], px = i / (N - 1) * w, py = mid - clamp(v, -3, 5.5) * sc; i ? x.lineTo(px, py) : x.moveTo(px, py); }
+  x.stroke(); x.fillStyle = col('--ac');
+  for (const m of Ped.marks) { const age = Ped.wi - m; if (age > 0 && age < N) { x.beginPath(); x.arc((N - age) / (N - 1) * w, 8, 3.5, 0, 7); x.fill(); } }
+}
+function drawFp() { // sonic fingerprint: one mirrored bar pair per transmitted byte
+  const cv = $('#fp'), p = P(); if (!cv || !p) return; const f = Modem.frame(audioBytes(p)), { x, w, h } = ctx2d(cv), bw = w / f.length, m = h / 2;
+  f.forEach((v, i) => { const hi = v >> 4, lo = v & 15; x.fillStyle = `hsl(${220 + hi * 8} 75% ${50 + lo}%)`; const a = (m - 2) * (0.2 + hi / 19); x.fillRect(i * bw, m - a, Math.max(1, bw - 0.6), a); x.fillStyle = `hsl(${160 + lo * 6} 70% 48%)`; x.fillRect(i * bw, m + 1, Math.max(1, bw - 0.6), (m - 2) * (0.2 + lo / 19)); });
+}
+
+/* ================= Shared view pieces ================= */
+const stride = p => (p.set.height || 170) * 0.00415;
+const stepGoal = p => p.pledges.find(x => x.kind === 'steps')?.target || p.set.goal || 8000;
+const motionLabel = () => { const t = pickThr(), r = S.rms; return Ped.walking ? 'Walking' : r < t * 0.15 ? 'Still' : r < t * 0.5 ? 'Steady' : r < t ? 'Handling' : 'Moving'; };
+const seg = (act, opts, cur) => `<div class="seg">${opts.map(([v, l]) => `<button class="${String(cur) === String(v) ? 'on' : ''}" data-act="${act}" data-v="${v}">${l}</button>`).join('')}</div>`;
+const tile = (i, c, v, l) => `<div class="stat"><span style="color:${c}">${ic(i)}</span><b>${v}</b><span>${l}</span></div>`;
+function banner() {
+  const b = (t, s, lbl) => `<div class="banner">${ic('sens')}<div class="f1"><b>${t}</b><div class="mu sm">${s}</div></div><button class="btn sm pri" data-act="sensors">${lbl}</button></div>`;
+  return ({
+    idle: b('Turn on motion sensors', 'Needed for face-down detection, pickup alerts and step counting.', 'Enable'),
+    insecure: b('Open over HTTPS for real sensors', 'Phones only share motion data with secure (https://) pages.', 'How?'),
+    denied: b('Motion access is blocked', 'Allow motion & orientation access to track sessions and steps.', 'Fix'),
+    nodata: coarse() ? b('No motion data received', 'Your browser isn’t delivering sensor readings.', 'Help') : ''
+  })[S.st] || '';
+}
+function progText(x, d) {
+  switch (x.kind) {
+    case 'offline': return `${fmtMin(d.off)} / ${fmtMin(x.target)} offline`;
+    case 'focus': return `${fmtMin(d.focus)} / ${fmtMin(x.target)} focused`;
+    case 'steps': return `${num(d.steps)} / ${num(x.target)} steps`;
+    case 'sleep': return d.ck[x.id] ? 'Marked done' : d.sl ? `${fmtMin(d.sl)} face-down overnight` : `Auto: ${x.target}h face-down overnight · or tick`;
+    case 'dining': return d.ck[x.id] ? 'Marked done' : d.dn ? `${fmtMin(d.dn)} phone-free at meals` : 'Flip phone down at meals · or tick';
+    case 'limit': return `Self-check: ${esc(x.app || 'app')} under ${fmtMin(x.target)} today`;
+    default: return d.ck[x.id] ? 'Done today' : 'Tick when done';
+  }
+}
+function pledgeRow(x, d) {
+  const K = KINDS[x.kind], pr = clamp(prog(x, d) || 0, 0, 1), on = pr >= 1;
+  return `<div class="pl" style="--c:${K.c}"><div class="ico">${ic(K.icon)}</div><div class="f1"><div class="pl-t">${esc(x.label)}</div><div class="pl-s">${progText(x, d)}</div>${K.auto || pr ? `<div class="bar"><i style="width:${(pr * 100).toFixed(1)}%"></i></div>` : ''}</div>${K.auto ? `<span class="ck${on ? ' on' : ''}">${ic('check')}</span>` : `<button class="ck${on ? ' on' : ''}" data-act="check" data-v="${x.id}" aria-label="Mark ${esc(x.label)} done" aria-pressed="${on}">${ic('check')}</button>`}</div>`;
+}
+
+/* ================= Header ================= */
+const TITLES = { focus: ['Detox', 'Face-down sessions & focus pledges'], walk: ['Steps', 'Motion-sensor pedometer'], pledges: ['Pledges', 'Your commitments'], me: ['Me', 'Profile, badges & data'] };
+function renderPill() {
+  const [t, c] = { idle: ['Enable sensors', 'cta'], asking: ['Requesting…', ''], waiting: ['Connecting…', ''], on: ['Sensors live', 'on'], sim: ['Simulator', 'sim'], insecure: ['Needs HTTPS', 'bad'], denied: ['Motion blocked', 'bad'], nodata: [S.sim ? 'Simulator' : 'No sensor data', S.sim ? 'sim' : 'bad'] }[S.st] || ['Sensors', ''];
+  const el = $('#pill'); el.className = 'pill ' + c; el.innerHTML = `<i class="dot"></i><span>${t}</span>`; el.setAttribute('aria-label', 'Motion sensors: ' + t);
+}
+function renderHeader() {
+  const p = P(), h = new Date().getHours();
+  const t = TITLES[ui.view] || [`Good ${h < 5 ? 'night' : h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'}, ${esc(p.name)}`, new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })];
+  $('#h-title').innerHTML = t[0]; $('#h-sub').textContent = t[1];
+  $('#avb').innerHTML = avatar(p.av, 40); renderPill();
+  $$('.nav button').forEach(b => { b.classList.toggle('on', b.dataset.v === ui.view); b.setAttribute('aria-current', b.dataset.v === ui.view ? 'page' : 'false'); });
+}
+
+/* ================= Today ================= */
+function renderHome() {
+  const hmWeeks = matchMedia('(min-width:900px)').matches ? 40 : 16, p = P(), k = dayKey(), d = peek(k, p), st = streak(p), pl = p.pledges, kept = pl.filter(x => done(x, d)).length;
+  p.best = bestStreak(p);
+  const T = { off: ['Offline', '#14b8a6', fmtMin], focus: ['Focus', '#6366f1', fmtMin], steps: ['Steps', '#22c55e', num] }, [, tc, tf] = T[ui.trend];
+  const vals = [...Array(14)].map((_, i) => peek(dayKey(addDays(new Date(), i - 13)), p)[ui.trend]);
+  $('#v-home').innerHTML = `${banner()}
+<div class="grid cols">
+ <div class="card"><div class="hero">
+  <div class="rw">${rings(pl.slice(0, 4).map(x => ({ v: prog(x, d), c: KINDS[x.kind].c })))}<div class="rc"><b>${pl.length ? Math.round(score(p, k) * 100) + '%' : '—'}</b><span>today</span></div></div>
+  <div class="f1">
+   <div class="streak">${ic('flame')}<b>${st.n}</b><span class="mu sm">day streak</span></div>
+   <div class="mu sm" style="margin:4px 0 10px">${!pl.length ? 'Add a pledge to begin' : st.todayOk ? 'Today’s pledge is complete' : `${kept} of ${pl.length} pledges kept today`}</div>
+   <div class="kv"><span>Adherence · 30d</span><b>${adherence(p)}%</b></div>
+   <div class="kv"><span>Best streak</span><b>${p.best} day${p.best === 1 ? '' : 's'}</b></div>
+   <div class="kv"><span>Grace day</span><b>${st.graces ? 'Used' : 'Available'}</b></div>
+  </div></div>
+  ${pl.length ? `<div class="legend">${pl.slice(0, 4).map(x => `<span><i style="background:${KINDS[x.kind].c}"></i>${esc(x.label)}</span>`).join('')}</div>` : ''}
+ </div>
+ <div class="grid g2">${tile('leaf', '#14b8a6', fmtMin(d.off), 'offline today')}${tile('book', '#6366f1', fmtMin(d.focus), 'deep focus')}${tile('walk', '#22c55e', num(d.steps), 'steps')}${tile('phone', '#f59e0b', d.pk + d.br, 'pickups & breaches')}</div>
+</div>
+<div class="grid cols mt">
+ <div class="card"><div class="hd"><h2>Today’s pledges</h2><button class="btn sm ghost" data-act="tab" data-v="pledges">Manage</button></div>${pl.length ? pl.map(x => pledgeRow(x, d)).join('') : `<div class="empty">No pledges yet.<br><button class="btn sm pri mt" data-act="addPledge">${ic('plus')}Add a pledge</button></div>`}</div>
+ <div class="card"><div class="hd"><h2>Last 14 days</h2>${seg('trend', Object.entries(T).map(([v, [l]]) => [v, l]), ui.trend)}</div><div class="kpi"><b>${tf(sum(vals, v => v) / 14)}</b><span class="mu sm"> daily average</span></div>${lineChart(vals, tc, tf)}</div>
+</div>
+<div class="card mt"><div class="hd"><h2>Adherence · ${hmWeeks} weeks</h2><span class="hm-l mu sm">Less <i style="background:var(--hm0)"></i><i style="opacity:.4"></i><i style="opacity:.7"></i><i></i> More</span></div>${heatmap(p, hmWeeks)}</div>`;
+}
+
+/* ================= Detox HUD ================= */
+const simPanel = () => `<div class="card"><div class="hd"><h2>${ic('sens')}Sensor simulator</h2><span class="tag">desktop</span></div>
+<p class="mu sm">No motion sensors here${window.isSecureContext ? '' : ' (and the page is not HTTPS)'}. These controls feed synthetic accelerometer + orientation data through the exact same face-down, pickup and step detectors.</p>
+<label class="rng"><span>Pitch β <b id="sb">${Sim.b}°</b></span><input type="range" min="-180" max="180" value="${Sim.b}" data-in="simB" aria-label="Pitch"></label>
+<label class="rng"><span>Roll γ <b id="sg">${Sim.g}°</b></span><input type="range" min="-90" max="90" value="${Sim.g}" data-in="simG" aria-label="Roll"></label>
+<div class="chips"><button class="chip" data-act="simFlip">Flip face-down</button><button class="chip" data-act="simUp">Face-up</button><button class="chip" data-act="simShake">Pick up / shake</button><button class="chip${Sim.walk ? ' on' : ''}" data-act="simWalk">${Sim.walk ? 'Stop walking' : 'Walk'}</button></div></div>`;
+const sesList = d => d.ses.length ? d.ses.slice().reverse().map(s => `<div class="ses"><div class="ico" style="--c:${s.k === 'p' ? '#6366f1' : '#14b8a6'}">${ic(s.k === 'p' ? 'focus' : 'phone')}</div><div class="f1"><b>${s.k === 'p' ? 'Focus pledge' : 'Deep Detox'}</b><div class="mu sm">${new Date(s.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${s.pk} pickup${s.pk === 1 ? '' : 's'}${s.br ? ` · ${s.br} breach${s.br > 1 ? 'es' : ''}` : ''}</div></div><b>${fmtMin(s.m)}</b>${s.k === 'p' ? `<span class="ck ${s.ok ? 'on' : 'bad'}" style="width:26px;height:26px">${ic(s.ok ? 'check' : 'x')}</span>` : ''}</div>`).join('') : '<div class="empty">No sessions yet today.<br>Flip your phone face-down or start a focus pledge.</div>';
+function renderFocus() {
+  const p = P(), c = Ses.cur;
+  const ctl = c ? `<div class="flex c">${c.kind === 'pledge' ? `<button class="btn danger" data-act="endSes">${ic('stop')}End early</button>` : `<button class="btn" data-act="endSes">${ic('stop')}Finish session</button>`}<button class="btn" data-act="pocket">${ic('eye')}Dim screen</button></div>`
+    : `<div class="chips c">${[15, 25, 45, 60, 90].map(m => `<button class="chip${ui.dur === m ? ' on' : ''}" data-act="dur" data-v="${m}">${m} min</button>`).join('')}</div>
+     <button class="btn pri wide mt" data-act="startPledge">${ic('play')}Start ${ui.dur}-min focus pledge</button>
+     <button class="btn ghost sm mt" data-act="startFlip">or start an open-ended detox</button>`;
+  $('#v-focus').innerHTML = `${banner()}
+<div class="grid cols">
+ <div class="card center">
+  <div class="tring">${ringSvg('tr', 'var(--ac)')}<div class="rc"><span id="f-top"></span><b id="f-time">0m</b><span id="f-sub"></span></div></div>
+  ${ctl}
+  <div class="amb"><span class="mu sm">${ic('vol')} Focus sound</span>${seg('amb', [['off', 'Off'], ['pink', 'Pink noise'], ['binaural', 'Binaural α']], p.set.amb)}</div>
+ </div>
+ <div class="card">
+  <div class="hd"><h2>Live telemetry</h2><span class="tag${S.real ? ' live' : ''}">${S.real ? 'Live sensors' : S.sim ? 'Simulated' : 'No data'}</span></div>
+  <div class="tele"><div class="ph3"><div class="ph" id="ph"><i class="f"></i><i class="b"></i></div></div>
+   <div class="tg"><div class="tv"><span>Pitch β</span><b id="t-b">—</b></div><div class="tv"><span>Roll γ</span><b id="t-g">—</b></div><div class="tv"><span>Motion RMS</span><b id="t-r">—</b></div><div class="tv"><span>Ambient light</span><b id="t-l">—</b></div></div></div>
+  <div class="meter" title="Red mark = pickup threshold"><i id="t-m"></i><em></em></div>
+  <canvas id="rmsc" aria-hidden="true"></canvas>
+  <div class="set"><span class="mu">State</span><b id="t-s">—</b></div>
+  <div class="set"><span>Auto-start when face-down</span><label class="sw"><input type="checkbox" data-chg="auto"${p.set.auto ? ' checked' : ''}><span></span></label></div>
+  <div class="set"><span>Keep screen awake<br><small class="mu">so face-down detection keeps running</small></span><label class="sw"><input type="checkbox" data-chg="awake"${ui.awake ? ' checked' : ''}><span></span></label></div>
+ </div>
+</div>
+<div class="grid cols mt"><div class="card"><h2 style="margin-bottom:10px">Today’s sessions</h2>${sesList(peek(dayKey(), p))}</div>${S.sim ? simPanel() : ''}</div>`;
+  hud();
+}
+function hud() {
+  if (!$('#f-time')) return;
+  const p = P(), c = Ses.cur, live = S.real || S.sim, el = Ses.el();
+  let f = 0, big, top, sub;
+  if (c?.kind === 'pledge') { f = el / c.tgt; big = fmtClock(c.tgt - el); top = 'Focus pledge · left'; sub = `${fmtClock(el)} in · ${c.pk} pickup${c.pk === 1 ? '' : 's'}${c.br ? ` · ${c.br} breach${c.br > 1 ? 'es' : ''}` : ''}`; }
+  else if (c) { f = (el % 36e5) / 36e5; big = fmtClock(el); top = 'Deep Detox'; sub = S.down ? 'Flip phone up to finish' : 'Tap Finish when done'; }
+  else { big = fmtMin(peek(dayKey(), p).off); top = 'Offline today'; sub = !live ? 'Enable sensors for auto-detection' : S.down ? 'Face-down detected…' : p.set.auto ? 'Place phone face-down to begin' : 'Auto-start is off'; }
+  setT('f-top', top); setT('f-time', big); setT('f-sub', sub); setRing('tr', f);
+  setT('t-b', live ? Math.round(S.beta) + '°' : '—'); setT('t-g', live ? Math.round(S.gamma) + '°' : '—');
+  setT('t-r', live ? S.rms.toFixed(2) : '—'); setT('t-l', S.lux != null ? Math.round(S.lux) + ' lx' : 'n/a');
+  setT('t-s', live ? motionLabel() + (S.down ? ' · face-down' : '') : 'Sensors off');
+  const ph = $('#ph'); if (ph) ph.style.transform = `rotateX(${-S.beta}deg) rotateY(${S.gamma}deg)`;
+  const m = $('#t-m'), t = pickThr(); if (m) { m.style.width = clamp(S.rms / (t * 2), 0, 1) * 100 + '%'; m.style.background = S.rms > t ? 'var(--er)' : S.rms > t * .5 ? 'var(--wa)' : 'var(--ok)'; }
+  drawRms();
+}
+
+/* ================= Steps ================= */
+function walkCharts() {
+  const p = P(), d = peek(dayKey(), p), a = $('#w-hr'), b = $('#w-7'); if (!a) return;
+  a.innerHTML = bars(d.sh || Array(24).fill(0), [...Array(24)].map((_, i) => i % 6 ? '' : ['12a', '6a', '12p', '6p'][i / 6]), '#22c55e');
+  const ks = [...Array(7)].map((_, i) => addDays(new Date(), i - 6));
+  b.innerHTML = bars(ks.map(x => peek(dayKey(x), p).steps), ks.map(x => x.toLocaleDateString(undefined, { weekday: 'narrow' })), '#22c55e', stepGoal(p));
+}
+function renderWalk() {
+  const p = P();
+  $('#v-walk').innerHTML = `${banner()}
+<div class="grid cols">
+ <div class="card center">
+  <div class="tring">${ringSvg('w-ring', '#22c55e')}<div class="rc"><span>steps today</span><b id="w-steps">0</b><span>goal ${num(stepGoal(p))}</span></div></div>
+  <div class="grid g4">${tile('mount', '#14b8a6', '<i id="w-km">0</i>', 'km')}${tile('flame', '#f97316', '<i id="w-kc">0</i>', 'kcal')}${tile('bolt', '#6366f1', '<i id="w-cad">0</i>', 'steps/min')}${tile('walk', '#22c55e', '<i id="w-am">0</i>', 'active min')}</div>
+  <div class="flex c mt"><button class="btn${ui.walkMode ? ' pri' : ''}" data-act="walkMode" aria-pressed="${ui.walkMode}">${ic('walk')}${ui.walkMode ? 'Walk mode on' : 'Start walk mode'}</button><button class="btn" data-act="pocket">${ic('eye')}Pocket mode</button></div>
+  <p class="mu sm mt" id="w-status"></p>
+ </div>
+ <div class="card">
+  <div class="hd"><h2>Live accelerometer</h2>${seg('sens', [[0, 'Low'], [1, 'Med'], [2, 'High']], p.set.sens)}</div>
+  <canvas id="wave" aria-hidden="true"></canvas>
+  <p class="mu sm mt">Gravity is filtered out of the acceleration magnitude. Peaks above the dashed line count as steps once 5 arrive in a steady rhythm, so random shakes are ignored.</p>
+  ${S.sim ? `<button class="btn sm mt" data-act="simWalk">${Sim.walk ? 'Stop simulated walk' : 'Simulate walking'}</button>` : ''}
+  <div class="note mt">${ic('info')}<span>Browsers only deliver motion data while this page is open with the screen on. <b>Walk mode</b> keeps the screen awake; <b>Pocket mode</b> blacks it out to save battery.</span></div>
+ </div>
+</div>
+<div class="grid cols mt"><div class="card"><h2>Today by hour</h2><div id="w-hr"></div></div><div class="card"><h2>Last 7 days</h2><div id="w-7"></div></div></div>`;
+  walkCharts(); walkHud();
+}
+function walkHud() {
+  if (!$('#w-steps')) return;
+  const p = P(), d = peek(dayKey(), p);
+  setT('w-steps', num(d.steps)); setRing('w-ring', d.steps / stepGoal(p));
+  setT('w-km', (d.steps * stride(p) / 1000).toFixed(2)); setT('w-kc', num(d.steps * 0.04)); setT('w-cad', String(Ped.cadence())); setT('w-am', String(Math.round(d.wm)));
+  setT('w-status', S.real ? (Ped.walking ? 'Walking detected · counting steps' : 'Listening for steps… keep this page open') : S.sim ? (Sim.walk ? 'Simulated walk in progress' : 'Simulator: this device has no motion sensor') : 'Motion sensors are off');
+}
+
+/* ================= Pledges ================= */
+function renderPledges() {
+  const p = P(), pl = p.pledges;
+  $('#v-pledges').innerHTML = `<div class="grid cols">
+ <div class="card doc"><div class="lab">MY DIGITAL DETOX PLEDGE</div><p>I, <b>${esc(p.name)}</b>, pledge to:</p>
+  <ul>${pl.map(x => `<li style="--c:${KINDS[x.kind].c}">${ic(KINDS[x.kind].icon)}${esc(x.label)}</li>`).join('') || '<li class="mu">No pledges yet. Add one to get started.</li>'}</ul>
+  <div class="sig"><span>${esc(p.name)}</span><small class="mu">Signed ${fmtDate(p.signed || p.created)}</small></div></div>
+ <div class="card"><div class="hd"><h2>Pledges</h2><button class="btn sm pri" data-act="addPledge">${ic('plus')}Add</button></div>
+  ${pl.map(x => { const K = KINDS[x.kind]; return `<div class="pl" style="--c:${K.c}"><div class="ico">${ic(K.icon)}</div><div class="f1"><div class="pl-t">${esc(x.label)}</div><div class="pl-s">${K.name}${x.kind === 'custom' ? '' : ` · ${num(x.target)} ${K.u}`}${K.auto ? ' · auto-tracked' : ''}</div></div><button class="btn sm ghost" data-act="editPledge" data-v="${x.id}" aria-label="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delPledge" data-v="${x.id}" aria-label="Delete">${ic('trash')}</button></div>`; }).join('') || '<div class="empty">Nothing here yet.</div>'}
+  <div class="note mt">${ic('info')}<span>A day counts toward your streak when you keep at least 75% of your pledges (each breach costs 5%). One missed day per week is forgiven as a grace day.</span></div></div>
+</div>`;
+}
+
+/* ================= Me ================= */
+function caps() {
+  return [['Secure context (HTTPS)', isSecureContext], ['Motion sensor', S.real ? 'Live' : 'DeviceMotionEvent' in window ? 'API present' : false], ['Orientation sensor', S.ori ? 'Live' : 'DeviceOrientationEvent' in window ? 'API present' : false],
+    ['Motion permission prompt', needPerm() ? (S.real ? 'Granted' : 'Required') : 'Not needed'], ['Ambient light sensor', S.lux != null ? 'Live' : 'AmbientLightSensor' in window ? 'API present' : false],
+    ['Screen wake lock', 'wakeLock' in navigator], ['Vibration', 'vibrate' in navigator], ['Web Audio', !!(window.AudioContext || window.webkitAudioContext)]]
+    .map(([n, v]) => `<div class="cap"><span>${n}</span><b class="${v === false ? 'no' : 'yes'}">${v === true ? 'Yes' : v === false ? 'No' : v}</b></div>`).join('');
+}
+function renderMe() {
+  const p = P(), ab = audioBytes(p), cap = Capsule.encode(p), hasSteps = p.pledges.some(x => x.kind === 'steps');
+  const sw = (k, on) => `<label class="sw"><input type="checkbox" data-chg="${k}"${on ? ' checked' : ''}><span></span></label>`;
+  $('#v-me').innerHTML = `<div class="grid cols">
+ <div class="card"><div class="flex">${avatar(p.av, 64)}<div class="f1"><h2 style="font-size:20px">${esc(p.name)}</h2><div class="mu sm">Since ${fmtDate(p.created)} · ${p.pinF ? 'PIN protected' : 'No PIN'}</div></div></div>
+  <div class="flex mt"><button class="btn sm" data-act="editProfile">${ic('edit')}Edit profile</button><button class="btn sm" data-act="profiles">${ic('swap')}Switch profile</button></div></div>
+ <div class="card"><div class="hd"><h2>Badges</h2><span class="mu sm">${Object.keys(p.badges).length}/${BADGES.length} unlocked</span></div>
+  <div class="badges">${BADGES.map(b => `<button class="bd" data-act="badge" data-v="${b.id}">${badgeSvg(b, p.badges[b.id])}<span>${b.name}</span></button>`).join('')}</div></div>
+</div>
+<div class="grid cols mt">
+ <div class="card"><h2>Settings</h2>
+  <div class="set"><span>Theme</span>${seg('theme', [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']], db.theme || 'auto')}</div>
+  <div class="set"><span>Sound effects</span>${sw('sound', p.set.sound)}</div>
+  <div class="set"><span>Haptics</span>${sw('hap', p.set.hap)}</div>
+  <div class="set"><span>Motion sensitivity</span>${seg('sens', [[0, 'Low'], [1, 'Med'], [2, 'High']], p.set.sens)}</div>
+  <div class="set"><span>Height <small class="mu">(stride length)</small></span><span><input class="num" type="number" inputmode="numeric" min="100" max="230" value="${p.set.height}" data-chg="height" aria-label="Height in cm"> cm</span></div>
+  <div class="set"><span>Daily step goal</span>${hasSteps ? '<span class="mu sm">Set by your steps pledge</span>' : `<input class="num" type="number" inputmode="numeric" min="500" max="100000" value="${p.set.goal}" data-chg="goal" aria-label="Step goal">`}</div></div>
+ <div class="card"><h2>Backup & sonic snapshot</h2>
+  <div class="flex mt"><button class="btn sm" data-act="exportJson">${ic('down')}Export JSON</button><button class="btn sm" data-act="importJson">${ic('up')}Import JSON</button></div>
+  <canvas id="fp" class="mt" aria-label="Sonic fingerprint"></canvas>
+  <p class="mu sm">Your last 14 days encode to ${ab.length} bytes, played as a ${(Modem.PRE + (ab.length + 2) * Modem.T).toFixed(1)}s dual-tone signal. Full history is kept as a ${cap.length}-byte binary capsule (base64) in localStorage.</p>
+  <div class="flex mt"><button class="btn sm" data-act="playTone">${ic('play')}Play data tone</button><button class="btn sm" data-act="saveWav">${ic('down')}Save .wav</button><button class="btn sm" data-act="loadWav">${ic('up')}Restore .wav</button><button class="btn sm" data-act="copyCap">${ic('copy')}Copy capsule</button></div>
+  <button class="btn sm ghost danger mt" data-act="clearHist">${ic('trash')}Clear history</button></div>
+</div>
+<div class="card mt"><h2 style="margin-bottom:6px">Device capabilities</h2><div class="caps">${caps()}</div></div>`;
+  drawFp();
+}
+
+/* ================= Overlays, sheets, toasts ================= */
+function toast(msg, type = '') { const box = $('#toasts'), t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; box.append(t); while (box.children.length > 3) box.firstChild.remove(); setTimeout(() => t.classList.add('out'), 3200); setTimeout(() => t.remove(), 3600); }
+function openSheet(html) { const s = $('#sheet'); s.firstElementChild.innerHTML = `<button class="sh-x" data-act="closeSheet" aria-label="Close">${ic('x')}</button>` + html; s.hidden = false; requestAnimationFrame(() => s.classList.add('open')); }
+function closeSheet() { const s = $('#sheet'); s.classList.remove('open'); ui.pe = null; setTimeout(() => { if (!s.classList.contains('open')) s.hidden = true; }, 250); }
+function confirmSheet(t, msg, ok, fn) { ui.cfm = fn; openSheet(`<h2>${t}</h2><p class="mu">${msg}</p><div class="flex end mt"><button class="btn ghost" data-act="closeSheet">Cancel</button><button class="btn dangerf" data-act="cfm">${ok}</button></div>`); }
+const unlockedHtml = f => `<div class="mu sm mt">BADGE${f.length > 1 ? 'S' : ''} UNLOCKED</div><div class="unl">${f.map(b => `<div class="ub">${badgeSvg(b, 1)}<b>${b.name}</b><small class="mu">${b.desc}</small></div>`).join('')}</div>`;
+function celebrate(f) { if (!f?.length) return; Sound.fanfare(); buzz([60, 40, 60, 40, 200]); if (!$('#sheet').hidden) return toast('Badge unlocked: ' + f.map(b => b.name).join(', '), 'ok'); openSheet(`<div class="center">${unlockedHtml(f)}<button class="btn pri wide mt" data-act="closeSheet">Awesome</button></div>`); }
+function summary(c, min, still, f) {
+  openSheet(`<div class="center"><div class="okc">${ic('check')}</div><h2>Pledge kept!</h2><p class="mu">${fmtMin(min)} of deep, phone-free focus</p><div class="grid g3 mt">${tile('leaf', '#14b8a6', fmtMin(min), 'offline')}${tile('phone', '#f59e0b', c.pk, 'pickups')}${tile('focus', '#6366f1', fmtMin(still / 6e4), 'longest still')}</div>${f.length ? unlockedHtml(f) : ''}<button class="btn pri wide mt" data-act="closeSheet">Nice</button></div>`);
+  if (f.length) setTimeout(() => Sound.fanfare(), 1400);
+}
+function sensorSheet() {
+  const st = S.st, body = st === 'insecure' ? `<p>Browsers only share motion & orientation sensors with secure pages. This page uses <b>${esc(location.protocol)}</b>.</p><ol class="steps"><li>Run <code>python3 serve.py</code> in the app folder: it serves over HTTPS on your Wi-Fi and prints a phone URL.</li><li>Or host <code>index.html</code> on any HTTPS static host (GitHub Pages, Netlify, Vercel).</li><li>Open the https:// link on your phone and tap <b>Enable sensors</b>.</li></ol>`
+    : st === 'denied' ? `<p>Motion access was blocked.</p><ul class="steps"><li><b>iPhone:</b> reload, tap Enable sensors and choose <i>Allow</i>. If Safari stops asking, clear this site in Settings › Safari › Advanced › Website Data.</li><li><b>Android:</b> address bar › site settings › Motion sensors › Allow.</li></ul><button class="btn pri wide mt" data-act="retrySensors">Try again</button>`
+    : st === 'on' ? `<p>Accelerometer${S.ori ? ' + orientation' : ''}${S.lux != null ? ' + ambient light' : ''} streaming live.</p><ul class="steps"><li>Lay the phone face-down to auto-start a Deep Detox session.</li><li>Steps count while this page is open. Walk mode keeps the screen awake.</li><li>Sensors pause when the screen is off or you switch apps.</li></ul>`
+    : S.sim ? '<p>This device reports no motion sensors (normal for laptops). The <b>simulator</b> in the Detox tab drives the same detection pipeline. Open the page on your phone over HTTPS for real sensors.</p>'
+    : `<p>No readings are arriving yet.</p><ul class="steps"><li>Make sure the page is opened over <b>https://</b>.</li><li><b>Android:</b> site settings › Motion sensors › Allow, then reload.</li></ul><button class="btn pri wide mt" data-act="retrySensors">Try again</button>`;
+  openSheet(`<h2>Motion sensors</h2>${body}`);
+}
+const avPicker = av => `<div class="avp"><div class="avrow">${AV_H.map((h, i) => `<button class="sc${av.h === i ? ' on' : ''}" data-act="avH" data-v="${i}" style="background:hsl(${h} 75% 58%)" aria-label="Colour ${i + 1}"></button>`).join('')}</div><div class="avrow">${AV_G.map((g, i) => `<button class="sg${av.g === i ? ' on' : ''}" data-act="avG" data-v="${i}" aria-label="${g}">${ic(g)}</button>`).join('')}</div><div class="avprev">${avatar(av, 58)}</div></div>`;
+const refreshAv = () => { $$('.sc').forEach(b => b.classList.toggle('on', +b.dataset.v === ui.av.h)); $$('.sg').forEach(b => b.classList.toggle('on', +b.dataset.v === ui.av.g)); $$('.avprev').forEach(e => e.innerHTML = avatar(ui.av, 58)); };
+function showOnboard(adding) {
+  ui.ob = { adding, kinds: new Set(['offline', 'steps', 'limit', 'sleep']) }; ui.av = { h: Math.floor(Math.random() * 8), g: 0 };
+  const o = $('#ob'); o.hidden = false;
+  o.innerHTML = `<div class="obc card">${logo(52)}<h1>${adding ? 'New profile' : 'Welcome to Unplug'}</h1><p class="mu">Make a digital detox pledge. Your phone's motion sensors detect face-down focus, stillness and steps. Everything stays on this device.</p>
+<label class="fl"><span>Your name</span><input id="ob-name" type="text" maxlength="30" placeholder="e.g. Sam" autocomplete="given-name"></label>
+<div class="fl"><span>Avatar</span>${avPicker(ui.av)}</div>
+<div class="fl"><span>Your pledges</span><div class="obk">${Object.entries(KINDS).filter(([k]) => k !== 'custom').map(([k, v]) => `<button class="kind${ui.ob.kinds.has(k) ? ' on' : ''}" data-act="obKind" data-v="${k}" style="--c:${v.c}">${ic(v.icon)}<span>${esc(defLabel(k, v.def))}</span></button>`).join('')}</div><small class="mu">Fine-tune targets anytime.</small></div>
+<button class="btn pri wide" data-act="obDone">Take the pledge</button>${adding ? '<button class="btn ghost wide mt" data-act="obCancel">Cancel</button>' : ''}</div>`;
+}
+function showLock(id) {
+  ui.locked = id; ui.pin = ''; const q = db.profiles[id], others = Object.values(db.profiles).filter(x => x.id !== id), L = $('#lock'); L.hidden = false;
+  L.innerHTML = `<div class="lk">${avatar(q.av, 76)}<h2>${esc(q.name)}</h2><p class="mu sm">Enter your 4-digit PIN</p><div class="dots" id="dots">${'<i></i>'.repeat(4)}</div><div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'del'].map(k => k === '' ? '<span></span>' : `<button data-act="pin" data-v="${k}" aria-label="${k === 'del' ? 'Delete' : k}">${k === 'del' ? ic('x') : k}</button>`).join('')}</div>${others.length ? `<p class="mu sm mt">or switch to</p><div class="flex c">${others.map(x => `<button data-act="lockTo" data-v="${x.id}" aria-label="${esc(x.name)}">${avatar(x.av, 40)}</button>`).join('')}</div>` : ''}</div>`;
+}
+async function hashPin(pin, salt) {
+  const s = salt + ':' + pin; let h = 2166136261, pinS = null;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
+  try { if (crypto?.subtle) pinS = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, '0')).join(''); } catch {}
+  return { pinF: h.toString(36), pinS };
+}
+const unlockTo = id => { ui.locked = null; $('#lock').hidden = true; db.active = id; Store.emit('db'); };
+async function pinKey(v) {
+  if (v === 'del') ui.pin = ui.pin.slice(0, -1); else if (ui.pin.length < 4) ui.pin += v; else return;
+  const dots = $('#dots'); $$('i', dots).forEach((d, i) => d.classList.toggle('on', i < ui.pin.length));
+  if (ui.pin.length < 4) return;
+  const q = db.profiles[ui.locked], r = await hashPin(ui.pin, q.salt);
+  if (q.pinS && r.pinS ? q.pinS === r.pinS : q.pinF === r.pinF) { buzz(15); unlockTo(q.id); }
+  else { ui.pin = ''; buzz([60, 40, 60]); dots.classList.remove('err'); void dots.offsetWidth; dots.classList.add('err'); setTimeout(() => $$('i', dots).forEach(d => d.classList.remove('on')), 300); }
+}
+function pledgeSheet(id, kind) {
+  const x = id ? P().pledges.find(q => q.id === id) : null; kind = x ? x.kind : kind || 'offline'; ui.pe = { id, kind }; const K = KINDS[kind];
+  openSheet(`<h2>${x ? 'Edit pledge' : 'New pledge'}</h2>${x ? '' : `<div class="kinds">${Object.entries(KINDS).map(([k, v]) => `<button class="kind${k === kind ? ' on' : ''}" data-act="pk" data-v="${k}" style="--c:${v.c}">${ic(v.icon)}<span>${v.name}</span></button>`).join('')}</div>`}
+${kind === 'limit' ? `<label class="fl"><span>App or site</span><input id="pe-app" type="text" maxlength="24" value="${esc(x?.app || 'Instagram')}"></label>` : ''}
+${kind === 'custom' ? '' : `<label class="fl"><span>Daily target · ${K.u}</span><input id="pe-t" type="number" inputmode="numeric" min="1" max="${K.max}" value="${x?.target ?? K.def}"></label>`}
+<label class="fl"><span>Label</span><input id="pe-label" type="text" maxlength="40" value="${esc(x?.label || '')}" placeholder="${kind === 'custom' ? 'e.g. Read 20 pages' : 'Auto-generated'}"></label>
+<p class="note">${ic('info')}<span>${K.how}</span></p><div class="flex end mt"><button class="btn ghost" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="savePledge">${x ? 'Save' : 'Add pledge'}</button></div>`);
+}
+
+/* ================= Actions (event delegation) ================= */
+function pickFile(accept, fn) { const i = $('#file'); i.value = ''; i.accept = accept; i.onchange = async () => { const f = i.files[0]; if (f) try { await fn(f); } catch (e) { toast(e.message || 'Import failed', 'er'); } }; i.click(); }
+const adopt = (q, msg) => { db.profiles[q.id] = q; db.active = q.id; ui.view = 'home'; Store.emit('db'); Sound.sig(Capsule.encode(q)); toast(msg, 'ok'); };
+const ACT = {
+  tab: v => { ui.view = v; Store.emit('view'); scrollTo(0, 0); },
+  sensors: () => S.st === 'idle' ? Sens.enable(true) : sensorSheet(),
+  retrySensors: () => { closeSheet(); S.st = 'idle'; Sens.enable(true); },
+  profiles: () => openSheet(`<h2>Profiles</h2>${Object.values(db.profiles).map(q => `<button class="prow${q.id === db.active ? ' on' : ''}" data-act="switchTo" data-v="${q.id}">${avatar(q.av, 40)}<span class="f1"><b>${esc(q.name)}</b><small class="mu">${streak(q).n}-day streak</small></span>${q.pinF ? ic('lock') : ''}${q.id === db.active ? ic('check') : ''}</button>`).join('')}<button class="btn wide mt" data-act="newProfile">${ic('plus')}Add profile</button>`),
+  switchTo: id => { closeSheet(); const q = db.profiles[id]; if (!q || id === db.active) return; if (Ses.cur) return toast('Finish the current session first', 'wa'); q.pinF ? showLock(id) : (unlockTo(id), toast('Switched to ' + q.name)); },
+  lockTo: id => db.profiles[id].pinF ? showLock(id) : unlockTo(id),
+  pin: v => pinKey(v),
+  newProfile: () => { closeSheet(); showOnboard(true); },
+  obKind: (v, el) => { const k = ui.ob.kinds; k.has(v) ? k.delete(v) : k.add(v); el.classList.toggle('on', k.has(v)); },
+  obCancel: () => { $('#ob').hidden = true; ui.ob = null; },
+  obDone: () => {
+    const name = $('#ob-name').value.trim().slice(0, 30); if (!name) { toast('What should we call you?', 'er'); return $('#ob-name').focus(); }
+    if (S.st === 'idle') Sens.enable(true); // iOS: ask for motion access inside this tap
+    const p = newProfile(name, { ...ui.av }, [...ui.ob.kinds]); ui.ob = null; $('#ob').hidden = true;
+    adopt(p, `Pledge signed. Welcome, ${name}!`); Sound.chord(); buzz([20, 40, 20]);
+  },
+  avH: v => { ui.av.h = +v; refreshAv(); }, avG: v => { ui.av.g = +v; refreshAv(); },
+  editProfile: () => { const p = P(); ui.av = { ...p.av }; openSheet(`<h2>Edit profile</h2><label class="fl"><span>Name</span><input id="pf-name" type="text" maxlength="30" value="${esc(p.name)}"></label><div class="fl"><span>Avatar</span>${avPicker(ui.av)}</div><label class="fl"><span>${p.pinF ? 'New PIN (blank = keep)' : 'PIN lock (optional)'}</span><input id="pf-pin" type="password" inputmode="numeric" maxlength="4" placeholder="4 digits" autocomplete="new-password"></label>${p.pinF ? '<label class="sw"><input type="checkbox" id="pf-nopin"><span></span>Remove PIN</label>' : ''}<p class="mu sm mt">The PIN stops casual access on a shared device. Data never leaves this device.</p><div class="flex mt"><button class="btn ghost danger" data-act="delProfile">${ic('trash')}Delete</button><span class="f1"></span><button class="btn pri" data-act="saveProfile">Save</button></div>`); },
+  saveProfile: async () => {
+    const p = P(), name = $('#pf-name').value.trim().slice(0, 30), pin = $('#pf-pin').value.trim();
+    if (!name) return toast('Name can’t be empty', 'er'); if (pin && !/^\d{4}$/.test(pin)) return toast('PIN must be 4 digits', 'er');
+    p.name = name; p.av = { ...ui.av };
+    if ($('#pf-nopin')?.checked) p.pinF = p.pinS = null; else if (pin) Object.assign(p, await hashPin(pin, p.salt));
+    closeSheet(); Store.emit('db'); toast('Profile saved', 'ok');
+  },
+  delProfile: () => confirmSheet('Delete this profile?', `All of ${esc(P().name)}’s pledges, history and badges will be erased from this device.`, 'Delete', () => {
+    if (Ses.cur?.pid === db.active) { Ses.cur = null; Wake.set('ses', false); Sound.stopAmb(); try { localStorage.removeItem(LIVE); } catch {} }
+    try { localStorage.removeItem(KEY + '.cap.' + db.active); } catch {}
+    delete db.profiles[db.active]; db.active = Object.keys(db.profiles)[0] || null; save(true);
+    if (!db.active) showOnboard(false); else if (P().pinF) showLock(db.active);
+    Store.emit('db');
+  }),
+  check: id => { const d = todayRec(); if (d.ck[id]) delete d.ck[id]; else { d.ck[id] = 1; Sound.blip(); } buzz(12); Store.emit('db'); celebrate(checkBadges()); },
+  addPledge: () => pledgeSheet(null, 'offline'), editPledge: id => pledgeSheet(id), pk: v => pledgeSheet(null, v),
+  savePledge: () => {
+    const p = P(), { id, kind } = ui.pe, K = KINDS[kind], x = id && p.pledges.find(q => q.id === id);
+    const target = kind === 'custom' ? 1 : Math.min(K.max, Math.round(+$('#pe-t').value));
+    if (!(target >= 1)) return toast('Enter a target of at least 1', 'er');
+    const app = ($('#pe-app')?.value || '').trim().slice(0, 24) || 'Instagram';
+    let label = $('#pe-label').value.trim().slice(0, 40);
+    if (!label || (x && label === x.label && x.label === defLabel(x.kind, x.target, x.app))) label = defLabel(kind, target, app);
+    if (x) Object.assign(x, { target, app, label });
+    else { if (p.pledges.length >= 12) return toast('Up to 12 pledges', 'er'); p.pledges.push({ id: uid(), kind, target, app, label }); }
+    p.signed = dayKey(); closeSheet(); Store.emit('db'); toast('Pledge saved', 'ok');
+  },
+  delPledge: id => confirmSheet('Remove pledge?', 'Past days will be re-scored without it.', 'Remove', () => { const p = P(); p.pledges = p.pledges.filter(x => x.id !== id); p.signed = dayKey(); Store.emit('db'); }),
+  dur: v => { ui.dur = +v; renderFocus(); },
+  startPledge: () => { if (S.st === 'idle') Sens.enable(true); Ses.start('pledge', ui.dur); },
+  startFlip: () => { if (S.st === 'idle') Sens.enable(true); Ses.start('flip'); },
+  endSes: () => { const c = Ses.cur; if (!c) return; c.kind === 'pledge' ? confirmSheet('End focus pledge early?', 'Ending before the timer finishes logs a breach. Minutes you focused still count.', 'End pledge', () => Ses.end('quit')) : Ses.end('manual'); },
+  amb: v => { P().set.amb = v; save(); clearTimeout(ui.ambT); Sound.ambient(v); if (!Ses.cur) ui.ambT = setTimeout(() => { if (!Ses.cur) Sound.stopAmb(); }, 3500); renderFocus(); },
+  trend: v => { ui.trend = v; renderHome(); },
+  walkMode: () => { if (S.st === 'idle') Sens.enable(true); ui.walkMode = !ui.walkMode; Wake.set('walk', ui.walkMode); toast(ui.walkMode ? 'Walk mode on: screen stays awake' : 'Walk mode off'); renderWalk(); },
+  pocket: () => { ui.pocket = true; Wake.set('pocket', true); dimHud(); },
+  sens: v => { P().set.sens = +v; save(); render(); },
+  theme: v => { db.theme = v; applyTheme(); save(); render(); },
+  badge: id => { const b = BADGES.find(x => x.id === id), t = P().badges[id]; openSheet(`<div class="center"><div class="bbig">${badgeSvg(b, t)}</div><h2>${b.name}</h2><p class="mu">${b.desc}</p><p class="sm mt">${t ? 'Unlocked ' + fmtDate(new Date(t)) : 'Not unlocked yet'}</p></div>`); },
+  exportJson: () => { const p = P(); download(new Blob([JSON.stringify({ app: 'unplug', v: 1, exported: new Date().toISOString(), profile: p })], { type: 'application/json' }), `unplug-${slug(p.name)}-${dayKey()}.json`); Sound.sig(Capsule.encode(p)); toast('Backup exported · sonic snapshot played', 'ok'); },
+  importJson: () => pickFile('application/json,.json', async f => {
+    const q = JSON.parse(await f.text())?.profile; if (!q || typeof q !== 'object' || !q.name) throw Error('Not an Unplug backup file');
+    normProfile(q); const old = db.profiles[q.id], go = () => adopt(q, `Imported ${q.name}`);
+    old ? confirmSheet('Replace profile?', `“${esc(old.name)}” already exists here. Replace it with the backup?`, 'Replace', go) : go();
+  }),
+  playTone: () => { if (!Sound.ok()) return toast('Turn on sound effects first', 'wa'); const b = audioBytes(P()); toast(`Playing ${b.length}-byte data tone (${Modem.schedule(Sound.ctx, Sound.out, b, Sound.ctx.currentTime + 0.05).toFixed(1)}s)`); },
+  saveWav: async () => { const p = P(); download(await Modem.wav(audioBytes(p)), `unplug-tone-${slug(p.name)}-${dayKey()}.wav`); toast('Tone saved. Restore it later with “Restore .wav”', 'ok'); },
+  loadWav: () => pickFile('audio/wav,.wav', async f => {
+    const c = Sound.init(); if (!c) throw Error('Web Audio unavailable');
+    const buf = await decodeAudio(c, await f.arrayBuffer()), bytes = Modem.decode(buf.getChannelData(0), buf.sampleRate);
+    adopt(fromCapsule(Capsule.decode(bytes)), `Decoded ${bytes.length} bytes from audio · restored as a new profile`);
+  }),
+  copyCap: async () => { const s = b64e(Capsule.encode(P())); try { await navigator.clipboard.writeText(s); toast(`Capsule copied (${s.length} chars)`, 'ok'); } catch { openSheet(`<h2>Data capsule</h2><textarea readonly style="width:100%;height:140px;font:12px monospace;padding:10px;border-radius:12px">${s}</textarea>`); } },
+  clearHist: () => confirmSheet('Clear all history?', 'Days, streaks and badges for this profile are erased. Pledges stay.', 'Clear', () => { const p = P(); p.days = {}; p.badges = {}; p.stats = {}; p.best = 0; Store.emit('db'); }),
+  simFlip: () => simSet(178, 0), simUp: () => simSet(8, 0), simShake: () => { Sim.shake = performance.now() + 900; },
+  simWalk: () => { Sim.walk = !Sim.walk; render(); },
+  closeSheet, cfm: () => { const f = ui.cfm; ui.cfm = null; closeSheet(); f?.(); }
+};
+const CHG = {
+  auto: el => { P().set.auto = el.checked; save(); }, awake: el => { ui.awake = el.checked; Wake.set('arm', el.checked); },
+  sound: el => { P().set.sound = el.checked; if (!el.checked) Sound.stopAmb(); save(); }, hap: el => { P().set.hap = el.checked; save(); },
+  height: el => { P().set.height = clamp(+el.value || 170, 100, 230); save(); }, goal: el => { P().set.goal = clamp(+el.value || 8000, 500, 1e5); save(); }
+};
+const simSet = (b, g) => { Sim.b = b; Sim.g = g; $$('[data-in]').forEach(e => e.value = e.dataset.in === 'simB' ? b : g); setT('sb', b + '°'); setT('sg', g + '°'); };
+const INP = { simB: el => { Sim.b = +el.value; setT('sb', el.value + '°'); }, simG: el => { Sim.g = +el.value; setT('sg', el.value + '°'); } };
+
+/* ================= Render loop & boot ================= */
+const VIEWS = { home: renderHome, focus: renderFocus, walk: renderWalk, pledges: renderPledges, me: renderMe };
+let rq = 0;
+function render() { if (rq) return; rq = requestAnimationFrame(() => { rq = 0; if (!P()) return; renderHeader(); $$('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + ui.view)); try { VIEWS[ui.view](); } catch (e) { console.error(e); } }); }
+function dimHud() {
+  const want = ui.pocket || (Ses.cur && S.down && S.real), el = $('#dim'); el.hidden = !want; if (!want) return;
+  const c = Ses.cur;
+  setT('dm-l', c ? (c.kind === 'pledge' ? 'Focus pledge' : 'Deep Detox') : 'Pocket mode');
+  setT('dm-t', c ? fmtClock(c.kind === 'pledge' ? c.tgt - Ses.el() : Ses.el()) : num(peek(dayKey()).steps));
+  setT('dm-s', c ? (S.down ? 'Flip up to end' : '') : 'steps today'); $('#dm-u').hidden = !ui.pocket;
+}
+const mq = matchMedia('(prefers-color-scheme: dark)');
+function applyTheme() { const t = !db.theme || db.theme === 'auto' ? (mq.matches ? 'dark' : 'light') : db.theme; document.documentElement.dataset.theme = t; $('meta[name=theme-color]').content = t === 'dark' ? '#0a0d17' : '#f4f6fb'; }
+function tick() {
+  if (S.real) faceEval();
+  Ses.tick(); Ped.flush();
+  if (dayKey() !== ui.today) { ui.today = dayKey(); Store.emit('db'); }
+  if (document.hidden) return;
+  if (ui.view === 'focus') hud(); else if (ui.view === 'walk') walkHud();
+  dimHud();
+}
+function boot() {
+  db = load(); applyTheme(); mq.addEventListener?.('change', applyTheme);
+  $('.nav').innerHTML = `<div class="brand">${logo(30)}Unplug</div>` + [['home', 'home', 'Today'], ['focus', 'focus', 'Detox'], ['walk', 'walk', 'Steps'], ['pledges', 'shield', 'Pledges'], ['me', 'user', 'Me']].map(([v, i, l]) => `<button data-act="tab" data-v="${v}">${ic(i)}<span>${l}</span></button>`).join('');
+  Store.on('db', () => { save(); dayCheck(); render(); });
+  Store.on('view', render);
+  Store.on('session', () => { if (ui.view === 'focus') renderFocus(); dimHud(); });
+  Store.on('sensor', () => { renderPill(); render(); });
+  document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el) return; try { ACT[el.dataset.act]?.(el.dataset.v, el, e); } catch (err) { console.error(err); toast('Something went wrong: ' + err.message, 'er'); } });
+  document.addEventListener('change', e => { const el = e.target.closest('[data-chg]'); if (el) CHG[el.dataset.chg]?.(el); });
+  document.addEventListener('input', e => { const el = e.target.closest('[data-in]'); if (el) INP[el.dataset.in]?.(el); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeSheet(); if (ui.locked && /^\d$/.test(e.key)) pinKey(e.key); if (ui.locked && e.key === 'Backspace') pinKey('del'); });
+  ['click', 'touchend', 'keydown'].forEach(ev => addEventListener(ev, Sound.unlock, { capture: true, passive: true }));
+  $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+  const u = $('#dm-u'); let ht = 0; // hold-to-unlock for pocket mode
+  u.addEventListener('pointerdown', () => { u.classList.add('hold'); ht = setTimeout(() => { ui.pocket = false; Wake.set('pocket', false); u.classList.remove('hold'); dimHud(); }, 900); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => u.addEventListener(ev, () => { clearTimeout(ht); u.classList.remove('hold'); }));
+  document.addEventListener('visibilitychange', () => { const now = Date.now(); if (document.hidden) { Ses.hide(now); Ped.flush(true); save(true); } else { Ses.show(now); Wake.sync(); render(); } });
+  addEventListener('pagehide', () => { Ped.flush(true); save(true); });
+  addEventListener('unhandledrejection', e => console.warn('Unhandled:', e.reason));
+  $('#app').hidden = false;
+  if (!P()) showOnboard(false); else { Ses.recover(); if (P().pinF) showLock(db.active); celebrate(checkBadges()); }
+  render();
+  Sens.enable(false);
+  setInterval(tick, 250);
+  (function loop() { if (ui.view === 'walk' && !document.hidden) drawWave(); requestAnimationFrame(loop); })();
+}
+boot();
+</script>
+</body>
+</html>
