@@ -1,88 +1,73 @@
 # 📵 Unplug: Digital Detox Pledge & Habit Tracker
 
-A web app that helps you put your phone down. Sign a detox pledge, and Unplug uses your phone's **motion sensors** to track face-down detox sessions, focus time and steps. It also keeps streaks and awards badges.
+A mobile web app that helps you use your phone less. Sign a detox pledge, and Unplug uses your phone's **motion sensors** to track face-down detox time, focus sessions and steps, with streaks and badges to keep you going.
 
-No login, no backend. All your data stays on your device.
-
-**🔗 Live app:** https://digital-detox-habit-tracker.vercel.app/
+**🔗 Live app:** https://digital-detox-habit-tracker.vercel.app/  ·  No login · No backend · Data stays on your device
 
 ---
 
 ## 🏠 Today
 
-<p>
-  <img src="screenshots/today.jpg" width="260">
-  <img src="screenshots/today-charts.jpg" width="260">
-</p>
+Your daily dashboard: progress rings, day streak, best streak, 30-day adherence, a 14-day trend chart, a 16-week heatmap, and today's pledges.
 
-- Progress rings with today's score
-- Day streak, best streak, 30-day adherence and grace day
-- Offline time, focus time, steps and pickups at a glance
-- A 14-day trend chart (Offline / Focus / Steps)
-- A 16-week adherence heatmap
+<table><tr>
+<td align="center" valign="top" width="33%"><img src="screenshots/01-today-overview.jpg" width="220"><br><sub>Overview & streak</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/02-today-trends-heatmap.jpg" width="220"><br><sub>Trends & heatmap</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/03-today-pledges.jpg" width="220"><br><sub>Today's pledges</sub></td>
+</tr></table>
 
 ## 📴 Detox
 
-<p>
-  <img src="screenshots/detox.jpg" width="260">
-  <img src="screenshots/telemetry.jpg" width="260">
-</p>
+Start a 15–90 min **focus pledge**, or place your phone face-down to start a detox automatically. Picking up the phone or leaving the app is logged as a breach. Live telemetry shows the phone's tilt, motion and state.
 
-- **Open-ended detox:** place your phone face-down and a session starts automatically
-- **Focus pledge:** a 15 to 90 minute timer. Picking up the phone or leaving the app counts as a breach
-- Focus sounds: pink noise or binaural tones
-- **Live telemetry:** 3D phone tilt, motion level and current state (still or moving)
-- Keep-screen-awake option and a list of today's sessions
+<table><tr>
+<td align="center" valign="top" width="50%"><img src="screenshots/04-detox-focus-pledge.jpg" width="220"><br><sub>Focus pledge timer</sub></td>
+<td align="center" valign="top" width="50%"><img src="screenshots/05-detox-live-telemetry.jpg" width="220"><br><sub>Live sensor telemetry</sub></td>
+</tr></table>
 
 ## 🚶 Steps
 
-<p>
-  <img src="screenshots/steps.jpg" width="260">
-  <img src="screenshots/accelerometer.jpg" width="260">
-</p>
+A step counter that uses the accelerometer. It shows distance, calories, cadence and active minutes. Walk mode keeps the screen on and pocket mode dims it. You also get hourly and 7-day charts.
 
-- Step counter that uses the phone's accelerometer
-- Distance, calories, cadence and active minutes
-- Live accelerometer graph with Low / Med / High sensitivity
-- **Walk mode** keeps the screen on. **Pocket mode** dims it to save battery
-- Steps by hour and over the last 7 days
+<table><tr>
+<td align="center" valign="top" width="25%"><img src="screenshots/06-steps-counter.jpg" width="220"><br><sub>Step counter</sub></td>
+<td align="center" valign="top" width="25%"><img src="screenshots/07-steps-walk-pocket-mode.jpg" width="220"><br><sub>Walk & pocket mode</sub></td>
+<td align="center" valign="top" width="25%"><img src="screenshots/08-steps-live-accelerometer.jpg" width="220"><br><sub>Live accelerometer</sub></td>
+<td align="center" valign="top" width="25%"><img src="screenshots/09-steps-charts.jpg" width="220"><br><sub>Hourly & 7-day charts</sub></td>
+</tr></table>
 
 ## 🛡️ Pledges & 🏅 Badges
 
-<p>
-  <img src="screenshots/pledges.jpg" width="260">
-  <img src="screenshots/badges.jpg" width="260">
-</p>
+A signed detox pledge card with 7 pledge types (offline, focus, steps, app limit, meals, sleep, custom). A day counts when you keep **75%** of your pledges. There are 12 badges to unlock.
 
-- A signed **"My Digital Detox Pledge"** card
-- 7 pledge types: offline time, focus, steps, app limit, phone-free meals, phone-free sleep, custom habit
-- A day counts towards your streak when you keep **75%** of your pledges. One missed day a week is forgiven
-- **12 badges** to unlock, such as First Flip, 7-Day Detox Titan and 10K Walker
+<table><tr>
+<td align="center" valign="top" width="33%"><img src="screenshots/10-pledges.jpg" width="220"><br><sub>My pledge</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/11-me-profile.jpg" width="220"><br><sub>Profile</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/12-badges.jpg" width="220"><br><sub>Badges</sub></td>
+</tr></table>
 
-## 👤 Me: Settings, Backup & Device Check
+## ⚙️ Settings & Backup
 
-<p>
-  <img src="screenshots/settings.jpg" width="260">
-  <img src="screenshots/backup.jpg" width="260">
-  <img src="screenshots/capabilities.jpg" width="260">
-</p>
+Theme, sound, haptics, sensitivity and height settings. Back up your data as JSON or as a **.wav sound file**, and check which sensors your device supports.
 
-- Multiple profiles, each with an optional 4-digit PIN
-- Theme (Auto / Light / Dark), sound, haptics, sensitivity and height
-- Back up your data as **JSON**, or as a **sound file (.wav)** that can be restored later
-- A device capabilities check that shows which sensors your phone supports
+<table><tr>
+<td align="center" valign="top" width="33%"><img src="screenshots/13-settings.jpg" width="220"><br><sub>Settings</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/14-backup-sonic-snapshot.jpg" width="220"><br><sub>Backup & sonic snapshot</sub></td>
+<td align="center" valign="top" width="33%"><img src="screenshots/15-device-capabilities.jpg" width="220"><br><sub>Device capabilities</sub></td>
+</tr></table>
 
 ---
-
-## 🛠️ Tech
-
-Plain HTML, CSS and JavaScript in a single file (about 93 KB) with no frameworks. It uses these browser APIs: Device Motion & Orientation, Wake Lock, Web Audio, Vibration and localStorage.
 
 ## 🚀 Run & Deploy
 
 ```bash
 npm install
-npm run build        # builds index.html from src/index.html
-python3 serve.py     # local HTTPS server for testing on your phone
+npm run build      # builds index.html from src/index.html
+python3 serve.py   # HTTPS server for testing on your phone
 ```
 
+**Deploy on Vercel:** import the repo, then choose Framework **Other**, Build command `npm run build`, Output directory `.`
+
+> Motion sensors need **HTTPS**, which Vercel provides automatically. On a laptop, the Detox tab shows a sensor simulator.
+
+**Built with** plain HTML, CSS and JavaScript (one file, about 93 KB, no frameworks).
